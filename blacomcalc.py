@@ -297,85 +297,90 @@ def find_min_max_in_str(string):
 
 
 def main(xyz, input_file):
+    try:
+        start_time = time.time()
 
-    start_time = time.time()
+        # first, parse the text
 
-    # first, parse the text
+        parsed_text = parse(input_file)
 
-    parsed_text = parse(input_file)
+        n_of_molecules = int(parsed_text[0])
+        molecule_blocks = parsed_text[1]
+        com_block = parsed_text[2]  # what molecule(s) for CoM calc
 
-    n_of_molecules = int(parsed_text[0])
-    molecule_blocks = parsed_text[1]
-    com_block = parsed_text[2]  # what molecule(s) for CoM calc
+        # find for what atoms and molecules calculate the CoM
+        # for every molecule in com_block I search the corresponding
+        # min and max atom index in the corresponding atoms_list block
+        # so that I can pass it to calc_com function and select
+        # the right atoms in the xyz file
 
-    # find for what atoms and molecules calculate the CoM
-    # for every molecule in com_block I search the corresponding
-    # min and max atom index in the corresponding atoms_list block
-    # so that I can pass it to calc_com function and select
-    # the right atoms in the xyz file
+        com_atoms_min = []
+        com_atoms_max = []
 
-    com_atoms_min = []
-    com_atoms_max = []
+        for molecule in com_block:
 
-    for molecule in com_block:
+            molecule_string = (molecule_blocks[int(molecule) - 1])
 
-        molecule_string = (molecule_blocks[int(molecule) - 1])
+            min_atom = find_min_max_in_str(molecule_string)[0]
+            max_atom = find_min_max_in_str(molecule_string)[1]
 
-        min_atom = find_min_max_in_str(molecule_string)[0]
-        max_atom = find_min_max_in_str(molecule_string)[1]
+            com_atoms_min.append(min_atom)
+            com_atoms_max.append(max_atom)
 
-        com_atoms_min.append(min_atom)
-        com_atoms_max.append(max_atom)
+        # for each molecule...
+        for molecule_bla in range(n_of_molecules):
 
-    # for each molecule...
-    for molecule_bla in range(n_of_molecules):
+            print(f'---------------------\n\n'
+                  f'BLA for MOLECULE: {molecule_bla+1}  \n\n'
+                  f'---------------------\n\n')
 
-        print(f'---------------------\n\n'
-              f'BLA for MOLECULE: {molecule_bla+1}  \n\n'
-              f'---------------------\n\n')
+            # calculate bond lengths and BLA value
+            calc_bla(xyz, molecule_blocks[molecule_bla])
 
-        # calculate bond lengths and BLA value
-        calc_bla(xyz, molecule_blocks[molecule_bla])
+        coms_coord_list = []  # initialize
 
-    coms_coord_list = []  # initialize
+        for molecule_com in range(len(com_block)):
 
-    for molecule_com in range(len(com_block)):
+            # calculate Center of Mass of the single molecules,
+            # specifying the range of every molecule
+            com_coord = calc_com(xyz, int(com_atoms_min[molecule_com]), int(com_atoms_max[molecule_com]))
 
-        # calculate Center of Mass of the single molecules,
-        # specifying the range of every molecule
-        com_coord = calc_com(xyz, int(com_atoms_min[molecule_com]), int(com_atoms_max[molecule_com]))
+            x = com_coord[0]
+            y = com_coord[1]
+            z = com_coord[2]
 
-        x = com_coord[0]
-        y = com_coord[1]
-        z = com_coord[2]
+            coms_coord_list.append(com_coord)  # list with all the CoM's coordinates
 
-        coms_coord_list.append(com_coord)  # list with all the CoM's coordinates
+            print(f'-------------------------------------------------\n'
+                  f'The center of mass of the molecule no. {int(molecule_com)+1} is at:\n'
+                  f'x = {x}\n'
+                  f'y = {y}\n'
+                  f'z = {z}\n'
+                  f'-------------------------------------------------\n\n')
 
-        print(f'-------------------------------------------------\n'
-              f'The center of mass of the molecule no. {int(molecule_com)+1} is at:\n'
-              f'x = {x}\n'
-              f'y = {y}\n'
-              f'z = {z}\n'
-              f'-------------------------------------------------\n\n')
+        # calculate the distance between the selected CoM's
 
-    # calculate the distance between the selected CoM's
+        # TODO calculate the distance between multiple molecules !!
 
-    # TODO calculate the distance between multiple molecules !!
+        # print time
+        print(f'######## Completed in: {round(((time.time() - start_time)*1000),2)} ms #########')
 
-    # print time
-    print(f'######## Completed in: {round(((time.time() - start_time)*1000),2)} ms #########')
+    except IndexError as e:
+
+        print(f'Error: {e}.\nThere might be a problem with the number of atoms. Maybe with line 1 '
+              f'or CoM\'s in atoms_list')
 
 
 if __name__ == "__main__":
     # parser for shell
-    parser = argparse.ArgumentParser(description='A small Python script to calculate BLA value and bond distances.',
-                                     epilog='Usage: blacomcalc.py xyz_file bla_file. Output for data is BLA.dat')
+    parser = argparse.ArgumentParser(description='A simple Computational Chemistry Python script to '
+                                                 'calculate bond lengths, BLA value (Bond Length Alternation) and '
+                                                 'center of mass (CoM) of the given atoms_list molecules and bonds, '
+                                                 'starting from an .xyz standard file.',
+                                     epilog='Usage: blacomcalc.py xyz_file bla_file. Output for plotting '
+                                            'data is BLA.dat')
     parser.add_argument('xyz_file', type=str, help="Input .xyz file: first 2 rows must be skipped!")
-    parser.add_argument('input_file', type=str, help="Input .bla file containing the desired distances between "
-                                                   "atoms. It suffices to write two atoms and the type of bond "
-                                                   "(s = single, d = double) in columns, "
-                                                   "all separated by a space, e.g.: \"atom1 atom2 d\". "
-                                                   "First line must begin with a comment "
-                                                   "(although # is not mandatory).")
+    parser.add_argument('input_file', type=str, help="Input atoms_list file containing the desired distances between "
+                                                   "atoms. See README.")
     args = parser.parse_args()
     main(args.xyz_file, args.input_file)
