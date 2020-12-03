@@ -1,7 +1,7 @@
 # Blacomcalc
 
 A simple Computational Chemistry script written in Python to calculate bond lengths,
-BLA value (Bond Length Alternation), bond lengths, center of masses (CoM) , distances between 
+BLA value (Bond Length Alternation), center of masses (CoM) , distances between 
 center of masses and bond angles of the given molecules and bonds (in `atoms_list` file), 
 starting from a standard `.xyz` file. 
 
