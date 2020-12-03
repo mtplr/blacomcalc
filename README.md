@@ -1,47 +1,81 @@
 # Blacomcalc
 
-A simple Computational Chemistry Python script to calculate bond lengths,
-BLA value (Bond Length Alternation) and center of mass (CoM) of the given 
-`atoms_list` molecules and bonds, starting from an `.xyz` standard file.
+A simple Computational Chemistry script written in Python to calculate bond lengths,
+BLA value (Bond Length Alternation), bond lengths, center of masses (CoM) , distances between 
+center of masses and bond angles of the given molecules and bonds (in `atoms_list` file), 
+starting from a standard `.xyz` file. 
+
+Also, for every molecule, it creates a BLA.dat file that can be plotted with e.g. Gnuplot.
 
 **Features:** 
 
-* Calculate every bond length distance between the inserted atoms, for the given molecule(n)
+* Calculate every bond length distance between the inserted atoms, for the given molecule(s)
 
 * Calculate the BLA according to the definition: the used formula 
 is the average of single bond distances minus the average of double bonds
 
+* Creates a BLA.dat file for every molecule that can be plotted with Gnuplot, as e.g. `BLA-1.dat` an so on
+
 * Calculate the center of mass of the desired inserted molecules
 
-* Calculate the distance between the desired center of masses (**WIP**)
+* Calculate the distance between the desired center of masses
+
+* Calculate the bond angle for the specified atoms 
 
 # Usage
 
-## To use it
-
 Clone this repo:
 
-`git clone https://github.com/mtplr/blacomcalc` 
+```bash
+git clone https://github.com/mtplr/blacomcalc
+```
 
-Launch it:
+Launch the script:
 
 ```bash
 calc_bla.py molecule.xyz atoms_list > output-blacomcalc
 ```
 
-## input file
+## input file guide
 
-The script reads a standard `.xyz` file containing the molecule geometry and an input file `atoms_list` containing:
+The script reads a standard `.xyz` file containing the molecule geometry and the indications on what 
+to looking for are within an input file called `atoms_list`. Data is reported according to the
+following specifications:
 
 * The first row: assign one number to the total number of molecules
 
-* `#M` delimiter, then two atoms for each row, the ones you want the program to calculate the distance between, 
+* `#M` tag, then two atoms for each row, the ones you want the program to calculate the distance between, 
 and a third column that specifies the bond type, everything separated by a space. This can be repeated with 
 multiple molecules separated by `#M`. For the definition of the single and double bonds the user will decide (before) 
-which is single and which is double based on the chemical structure given by the **neutral form**. 
+which is single and which is double based on the chemical structure given by the **neutral form**.
+    
+    * To quickly find the atoms involved in bonds, the [software Avogadro](https://avogadro.cc) can be used.
+     It suffices to go on _Selection Tool (F11) > Selection Mode > Molecule_ and then click on settings on
+     _Label_ in _Display Types_, and finally click to _Display only selective primitives_, as shown here:
+     
+     ![Avogadro settings](img/avogadro_selection.png)
 
-* At the end of molecule blocks `#COM` must be inserted, followed by the couple of molecules you want to 
-calculate the distance between their center of masses.
+* Every block must be specified within the appropriate tags: `#M...#M`, `#COM...#COM` or `#ANGLES...#ANGLES`
+
+* Angles are calculated specifying between what atoms, e.g.: for `12 13 14` the angle centered on atom 13, which is
+in the middle between 12 and 14 will be calculated
+
+* COM and ANGLES blocks can be empty, just specify only the tags between `null`. 
+For example, if you don't want to calculate the center of mass, just write:
+ 
+```
+#COM
+null
+#COM
+```
+
+```
+#ANGLES
+null
+#ANGLES
+```
+
+### Example of input file 1
 
 ```
 2
@@ -61,12 +95,42 @@ calculate the distance between their center of masses.
 #M
 #COM
 1 2
+. . .
+#COM
+#ANGLES
+12 13 14
+. . .
+#ANGLES
 ```
 
 The example above means: "calculate the distance between atoms 14 and 13, which corresponds to 
-a double bond" and so on, for two molecules. Finally, calculate the center of mass between the molecule 1 and 2.
+a double bond" and so on, for two molecules. Finally, calculate the center of mass between the molecule 1 and 2
+and the bond angle between the atoms 12 13 and 14.
 
 `s` indicates a single bond and `d` a double.
+
+### Example of input file 2
+
+This will calculate only the BLA value for one molecule, and one bond angle between three atoms.
+
+```
+1
+#M
+14 13 d
+15 16 d
+12 13 s
+12 15 s
+12 10 s
+10 11 s
+. . .
+#M
+#COM
+null
+#COM
+#ANGLES
+12 13 14
+#ANGLES
+```
 
 ## .xyz file
 
@@ -86,18 +150,18 @@ C         -3.36434       -3.78577        0.76351
 ...       ...             ...            ...
 ```
 
-where the number `25` followed by an empty line indicates the number of atoms in the molecule, followed by an empty line.
+where the number `25` indicates the number of atoms in the molecule, followed by an empty line.
 
 ## Example
 
-If you launch the example files here enclosed (`pyrl.xyz` and `atoms_list`) it is possible to compare 
-the calculated bond lengths obtained here (`outputbla`) against e.g. the Avogadro output 
-[(picture here)](BL_avogadro.png).
+If you launch the example files here enclosed in _Quickstart_ folder, with `pyrl.xyz` as geometry 
+and `atoms_list` as the input file, it is possible for example to compare the calculated bond 
+lengths obtained here against e.g. the Avogadro molecule output [(picture here)](img/BL_avogadro.png).
+
+The overall printed output example is reported in (`output-blacomcalc`).
 
 # License
 
 Author: (c) Matteo Paolieri, University of Cologne
-
-Version: 30.11.2020
 
 License: MIT (see LICENSE)
