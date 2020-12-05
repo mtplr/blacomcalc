@@ -20,7 +20,10 @@ is the average of single bond distances minus the average of double bonds
 
 * Calculate the distance between the desired center of masses
 
-* Calculate the bond angle for the specified atoms 
+* Calculate the bond angle for the specified atoms
+
+* Extract what bonds are formed between what atoms and the bond type (single, double, triple) from a 
+`.mol` file using the enclosed converter `convert-mol.py`. The output is ready for `atoms_list` file (see later).
 
 # Usage
 
@@ -51,9 +54,10 @@ which is single and which is double based on the chemical structure given by the
     
     * To quickly find the atoms involved in bonds, the [software Avogadro](https://avogadro.cc) can be used.
      It suffices to go on _Selection Tool (F11) > Selection Mode > Molecule_ and then click on settings on
-     _Label_ in _Display Types_, and finally click to _Display only selective primitives_, as shown here:
-     
-     ![Avogadro settings](img/avogadro_selection.png)
+     _Label_ in _Display Types_, and finally click to _Display only selective 
+      primitives_, as [shown here](img/avogadro_selection.png).
+	 
+	 * A new tool to simplify this task has also been added (see [this section here](#get-data-from-mol-files))
 
 * Every block must be specified within the appropriate tags: `#M...#M`, `#COM...#COM` or `#ANGLES...#ANGLES`
 
@@ -132,22 +136,32 @@ null
 #ANGLES
 ```
 
-## Get data from .mol files
+## Get data from .mol files (WIP)
 
-A tool to extract bond information in the way Blacomcalc reads it, is implemented: **convert-mol.py**.
+A quick tool to extract bonds information in the way Blacomcalc reads it, is implemented: just use **convert-mol.py**.
+
+This feature is currently work in progress, and it is reports data for Blacomcalc only for **oligomers** of 
+the same molecule. However, it can be used for different molecules only if `#M` delimiters are put later by hand.
 
 You can launch it as:
 
-`convert-mol.py mol_file`
+`convert-mol.py file.mol number`
 
-It can be interesting to convert the .xyz file in a .mol file using eg. Avogadro 
+Where `number` is the number of atoms of **one** molecule of the oligomer. Put it as e.g. 999 to not put delimiters.
+
+It may be useful to first convert a .xyz file in a .mol file using eg. Avogadro 
 or [OpenBabel](http://openbabel.org/wiki/Main_Page) first, and then run the script.
 
 This way it is possible to extract useful information to build the `atoms_list` file, since it contains
-the couple of atoms for each bond and it specifies what bond (bond order) it is involved the depicted form 
+the couple of atoms for each bond and it specifies what kind of bond (bond order) it is involved 
 (1 = single, 2 = double, 3 = triple, 4 = aromacity).
 
-The **.mol** file posseses this "turning point":
+The script converts it in 1 = s, 2 = d, 3 = t.
+
+`.mol` files can present also a number 4 for bond type, i.e. _aromaticity_. This is not supported with convert-mol.py 
+thus is needed to change them if necessary. A check for this in the script is present.
+
+The **.mol** file possesses this "turning point":
 
 ```
 ...
@@ -162,7 +176,8 @@ The **.mol** file posseses this "turning point":
 ...
 ```
 
-Here, e.g. `1  2  1  0  0  0  0` means: "single bond formed by atoms 1 and 2", and so on. The script parses this in order to get such lines in a form `1 2 s`.
+Here, e.g. `1  2  1  0  0  0  0` means: "single bond formed by atoms 1 and 2", and so on. 
+The script parses this in order to get such lines in a form `1 2 s`.
 
 # .xyz file
 
@@ -184,13 +199,15 @@ C         -3.36434       -3.78577        0.76351
 
 where the number `25` indicates the number of atoms in the molecule, followed by an empty line.
 
-## Example
+## Examples
 
 If you launch the example files here enclosed in _Quickstart_ folder, with `pyrl.xyz` as geometry 
 and `atoms_list` as the input file, it is possible for example to compare the calculated bond 
 lengths obtained here against e.g. the Avogadro molecule output [(picture here)](img/BL_avogadro.png).
 
 The overall printed output example is reported in (`output-blacomcalc`).
+
+An example for the `.mol` converter is also present, and its output file is `bonds-tetramer.txt`.
 
 # License
 

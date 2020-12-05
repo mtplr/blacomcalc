@@ -13,10 +13,14 @@ Author: (c) Matteo Paolieri, University of Cologne, Dec 2020
 Version: 2.0.3
 License: MIT
 
+Docs: https://github.com/mtplr/blacomcalc
+
 """
 
 
 import argparse
+import os
+
 import numpy as np
 import math
 import re as regex
@@ -45,6 +49,7 @@ def find_min_max_in_str(string):
     results = (min_n, max_n)
 
     return results
+
 
 def define_mass(m):
     # assign a mass value to the specified atom
@@ -582,6 +587,13 @@ def main(xyz, input_file):
               f' Maybe with line 1 or CoM\'s in atoms_list')
 
 
+def valid_file(param):  # check if the file is .xyz
+    base, ext = os.path.splitext(param)
+    if ext.lower() not in '.xyz':
+        print(f'Error: file must have a .xyz extension. Used {param} instead.')
+    return param
+
+
 if __name__ == "__main__":
     # parser for shell
     parser = argparse.ArgumentParser(description='A simple Computational Chemistry Python script to '
@@ -590,7 +602,7 @@ if __name__ == "__main__":
                                                  'starting from a standard .xyz file.',
                                      epilog='Usage: blacomcalc.py xyz_file atoms_list. Output for plotting '
                                             'data is BLA-n.dat, with n = number of molecule in atoms_list.')
-    parser.add_argument('xyz_file', type=str, help="Input .xyz file: first 2 rows must be skipped!")
+    parser.add_argument('xyz_file', type=valid_file, help="Input .xyz file: first 2 rows must be skipped!")
     parser.add_argument('input_file', type=str, help="Input atoms_list file containing the desired distances between "
                                                      "atoms. See README.")
     args = parser.parse_args()
