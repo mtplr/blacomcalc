@@ -5,7 +5,7 @@
 Extract bonds from .mol file for building an atoms_list file for Blacomcalc
 
 Author: (c) Matteo Paolieri, University of Cologne, Dec 2020
-Version: 1.1
+Version: 1.2
 License: MIT
 
 Docs: https://github.com/mtplr/blacomcalc
@@ -13,7 +13,6 @@ Docs: https://github.com/mtplr/blacomcalc
 """
 
 import argparse
-import numbers as num
 import os
 
 
@@ -96,10 +95,7 @@ def extract(molfile, n):
             print(f'{a1} {a2} {new_bt}', file=f)
 
             if (i % n) == 0:  # check if the number of molecules is a multiple of the line number; add #M delimiter
-                if i == len(data):  # check if we are at the last '#M'
-                    print(f'#M', file=f)
-                else:
-                    print(f'#M\n#M', file=f)
+                print(f'#M', file=f)
             else:
                 continue
 

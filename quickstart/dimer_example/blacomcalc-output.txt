@@ -1,0 +1,265 @@
+
+
+    +============================================================================+
+    |                                                                            |
+    |   (  _`\ (_ )                                               (_ )           |
+    |   | (_) ) | |    _ _    ___    _     ___ ___     ___    _ _  | |    ___    |
+    |   |  _ <' | |  /'_` ) /'___) /'_`\ /' _ ` _ `\ /'___) /'_` ) | |  /'___)   |
+    |   | (_) ) | | ( (_| |( (___ ( (_) )| ( ) ( ) |( (___ ( (_| | | | ( (___    |
+    |   (____/'(___)`\__,_)`\____)`\___/'(_) (_) (_)`\____)`\__,_)(___)`\____)   |
+    |                                                                            |
+    |   Matteo Paolieri, University of Cologne, 2020                (v. 2.0.4)   |
+    +============================================================================+
+
+
+
+------------------------
+
+BLA for MOLECULE: 1  
+
+------------------------
+
+
+Calculated bond length between atoms C (1) and C (4), d: 
+ 1.4001262812251702
+Calculated bond length between atoms C (2) and C (1), s: 
+ 1.3757408144862957
+Calculated bond length between atoms C (2) and C (3), d: 
+ 1.3994509380990288
+Calculated bond length between atoms C (3) and C (6), s: 
+ 1.38909454548533
+Calculated bond length between atoms C (3) and S (5), s: 
+ 1.7627116377004417
+Calculated bond length between atoms C (4) and N (20), s: 
+ 1.3265755523805933
+Calculated bond length between atoms C (4) and S (5), s: 
+ 1.7364767888140165
+Calculated bond length between atoms C (6) and C (7), s: 
+ 1.3795913882925999
+Calculated bond length between atoms C (7) and C (9), d: 
+ 1.4271170651345255
+Calculated bond length between atoms H (8) and C (6), s: 
+ 1.0811435570171086
+Calculated bond length between atoms C (9) and C (23), s: 
+ 1.5102990908937977
+Calculated bond length between atoms H (10) and C (2), s: 
+ 1.0760710078869449
+Calculated bond length between atoms H (11) and C (1), s: 
+ 1.0738384725513124
+Calculated bond length between atoms N (12) and C (9), s: 
+ 1.3095953639713112
+Calculated bond length between atoms C (13) and N (12), d: 
+ 1.324930098155686
+Calculated bond length between atoms S (14) and C (13), s: 
+ 1.7679304858367004
+Calculated bond length between atoms S (14) and C (7), s: 
+ 1.7620677861475635
+Calculated bond length between atoms C (15) and C (13), s: 
+ 1.382317496894858
+Calculated bond length between atoms C (16) and C (15), s: 
+ 1.395875167498156
+Calculated bond length between atoms N (17) and C (16), t: 
+ 1.1513275275584631
+Calculated bond length between atoms C (18) and C (15), s: 
+ 1.3996625182097027
+Calculated bond length between atoms N (19) and C (18), t: 
+ 1.1505131004273503
+Calculated bond length between atoms N (20) and C (22), s: 
+ 1.4488518309904714
+Calculated bond length between atoms C (21) and N (20), s: 
+ 1.4502427177360175
+Calculated bond length between atoms C (21) and H (26), s: 
+ 1.097349366273366
+Calculated bond length between atoms C (22) and C (27), s: 
+ 1.525143795472108
+Calculated bond length between atoms C (22) and H (32), s: 
+ 1.0938825464009259
+Calculated bond length between atoms C (23) and C (38), s: 
+ 1.5328483678302232
+Calculated bond length between atoms C (23) and C (42), s: 
+ 1.5349508790361854
+Calculated bond length between atoms C (24) and C (21), s: 
+ 1.525859502250997
+Calculated bond length between atoms C (24) and H (29), s: 
+ 1.0870494617650261
+Calculated bond length between atoms C (24) and C (27), s: 
+ 1.5272456600805853
+Calculated bond length between atoms H (25) and C (21), s: 
+ 1.091424497781802
+Calculated bond length between atoms C (27) and H (31), s: 
+ 1.0910935397669312
+Calculated bond length between atoms H (28) and C (24), s: 
+ 1.0898359989469815
+Calculated bond length between atoms H (30) and C (27), s: 
+ 1.0864248764453452
+Calculated bond length between atoms H (33) and C (22), s: 
+ 1.0967612926472046
+Calculated bond length between atoms C (34) and H (36), s: 
+ 1.0877663699667695
+Calculated bond length between atoms C (34) and C (23), s: 
+ 1.5323012998922674
+Calculated bond length between atoms H (35) and C (34), s: 
+ 1.087871099051954
+Calculated bond length between atoms H (37) and C (34), s: 
+ 1.0850057185560216
+Calculated bond length between atoms C (38) and H (41), s: 
+ 1.0874985435672098
+Calculated bond length between atoms C (38) and H (40), s: 
+ 1.0859318805597211
+Calculated bond length between atoms H (39) and C (38), s: 
+ 1.0860357940025607
+Calculated bond length between atoms C (42) and H (44), s: 
+ 1.0876909106210981
+Calculated bond length between atoms C (42) and H (45), s: 
+ 1.0877561424338482
+Calculated bond length between atoms H (43) and C (42), s: 
+ 1.0862417333517531
+
+
+=======================================================
+Molecule no.: 1
+Total single bonds: 41
+Total double bonds: 4
+Final BLA value is (Å): -0.08736815664155118
+=======================================================
+
+
+------------------------
+
+BLA for MOLECULE: 2  
+
+------------------------
+
+
+Calculated bond length between atoms C (47) and H (49), s: 
+ 1.0849783340306194
+Calculated bond length between atoms C (47) and H (46), s: 
+ 1.0877654163895485
+Calculated bond length between atoms H (50) and C (47), s: 
+ 1.087817178151737
+Calculated bond length between atoms C (54) and H (48), s: 
+ 1.0898206655549243
+Calculated bond length between atoms C (55) and N (56), t: 
+ 1.1504678351717197
+Calculated bond length between atoms C (57) and C (60), s: 
+ 1.5328398411126534
+Calculated bond length between atoms C (57) and H (52), s: 
+ 1.0861265884388105
+Calculated bond length between atoms C (58) and C (54), s: 
+ 1.526106732419126
+Calculated bond length between atoms C (58) and H (53), s: 
+ 1.0916652143463395
+Calculated bond length between atoms C (59) and C (55), s: 
+ 1.3993528597960274
+Calculated bond length between atoms C (59) and C (64), s: 
+ 1.39589809576409
+Calculated bond length between atoms C (60) and C (63), s: 
+ 1.5102953966668284
+Calculated bond length between atoms C (60) and C (47), s: 
+ 1.5320954956935793
+Calculated bond length between atoms S (61) and C (71), s: 
+ 1.7625759147247868
+Calculated bond length between atoms S (61) and C (69), s: 
+ 1.7361332265126437
+Calculated bond length between atoms C (62) and S (65), s: 
+ 1.767047092899225
+Calculated bond length between atoms C (62) and C (59), s: 
+ 1.3825077584857437
+Calculated bond length between atoms C (63) and N (67), s: 
+ 1.3096785593514155
+Calculated bond length between atoms C (63) and C (68), d: 
+ 1.426941336240231
+Calculated bond length between atoms C (64) and N (74), t: 
+ 1.1513507248948383
+Calculated bond length between atoms C (66) and N (72), s: 
+ 1.4487682231199932
+Calculated bond length between atoms C (66) and H (51), s: 
+ 1.0968781852787342
+Calculated bond length between atoms N (67) and C (62), d: 
+ 1.3250730652017768
+Calculated bond length between atoms C (68) and C (70), s: 
+ 1.37966092207203
+Calculated bond length between atoms C (68) and S (65), s: 
+ 1.7621410988227497
+Calculated bond length between atoms C (69) and C (73), d: 
+ 1.4002390075892348
+Calculated bond length between atoms C (70) and C (71), s: 
+ 1.3889471960382187
+Calculated bond length between atoms C (71) and C (75), d: 
+ 1.3995415637444675
+Calculated bond length between atoms N (72) and C (69), s: 
+ 1.3265037207985513
+Calculated bond length between atoms N (72) and C (58), s: 
+ 1.4502027089908842
+Calculated bond length between atoms C (73) and H (81), s: 
+ 1.0738360038946
+Calculated bond length between atoms C (75) and C (73), s: 
+ 1.3757036660282673
+Calculated bond length between atoms C (75) and H (82), s: 
+ 1.0760478117970036
+Calculated bond length between atoms H (77) and C (57), s: 
+ 1.0875366227206185
+Calculated bond length between atoms C (78) and C (66), s: 
+ 1.5248167099554495
+Calculated bond length between atoms C (78) and H (76), s: 
+ 1.0864304795604045
+Calculated bond length between atoms C (78) and C (54), s: 
+ 1.5272628844934015
+Calculated bond length between atoms H (79) and C (54), s: 
+ 1.0870536309352936
+Calculated bond length between atoms H (80) and C (70), s: 
+ 1.0810253130915193
+Calculated bond length between atoms H (83) and C (66), s: 
+ 1.0937492344239452
+Calculated bond length between atoms H (84) and C (57), s: 
+ 1.0858332984482684
+Calculated bond length between atoms H (85) and C (58), s: 
+ 1.0972418959256545
+Calculated bond length between atoms C (86) and H (89), s: 
+ 1.0865023484132708
+Calculated bond length between atoms C (86) and C (60), s: 
+ 1.5350205479486574
+Calculated bond length between atoms H (87) and C (86), s: 
+ 1.0876696072598246
+Calculated bond length between atoms H (88) and C (78), s: 
+ 1.0911274317453563
+Calculated bond length between atoms H (90) and C (86), s: 
+ 1.0877294155676103
+
+
+=======================================================
+Molecule no.: 2
+Total single bonds: 41
+Total double bonds: 4
+Final BLA value is (Å): -0.08745134495811246
+=======================================================
+
+
+
+The center of mass of the molecule no. 1 is at:
+x = -0.03030278783550605
+y = -0.6792855550628406
+z = 1.81762288501907
+
+
+
+The center of mass of the molecule no. 2 is at:
+x = 0.04361259266322051
+y = -0.8583775899235021
+z = -1.758409522394696
+
+
+The distance between the center of masses of molecules 1 and 2 is:
+3.581277037496304 Å
+
+
+
+====================
+ANGLES
+====================
+
+
+The angle no. 1 between C C C is: 127.9°
+
+
+######## Completed in: 1.89 ms #########

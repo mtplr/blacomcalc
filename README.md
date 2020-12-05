@@ -7,7 +7,7 @@ starting from a standard `.xyz` file.
 
 Also, for every molecule, it creates a BLA.dat file that can be plotted with e.g. Gnuplot.
 
-**Features:** 
+### Features
 
 * Calculate every bond length distance between the inserted atoms, for the given molecule(s)
 
@@ -22,8 +22,9 @@ is the average of single bond distances minus the average of double bonds
 
 * Calculate the bond angle for the specified atoms
 
-* Extract what bonds are formed between what atoms and the bond type (single, double, triple) from a 
-`.mol` file using the enclosed converter `convert-mol.py`. The output is ready for `atoms_list` file (see later).
+* Extract what bonds are formed between what atoms, and the bond type (single, double, triple), from a 
+`.mol` file using the enclosed converter `convert-mol.py`. The output is ready for `atoms_list` file 
+  (see [later](#get-data-from-mol-files-wip)).
 
 # Usage
 
@@ -36,13 +37,18 @@ git clone https://github.com/mtplr/blacomcalc
 Launch the script:
 
 ```bash
-calc_bla.py molecule.xyz atoms_list > output-blacomcalc
+calc_bla.py molecule.xyz atoms_list > output-blacomcalc.txt
 ```
 
 # input file guide
 
-The script reads a standard `.xyz` file containing the molecule geometry and the indications on what 
-to looking for are within an input file called `atoms_list`. Data is reported according to the
+The script reads a standard `.xyz` file (the extension is mandatory!) 
+containing the molecule geometry and the indications on what 
+to looking for are within an input file called `atoms_list`. 
+The extension of such file doesn't matter, it is plain text, so no ext 
+or e.g. `.txt` are equally fine.
+
+Data is reported according to the
 following specifications:
 
 * The first row: assign one number to the total number of molecules
@@ -57,14 +63,16 @@ which is single and which is double based on the chemical structure given by the
      _Label_ in _Display Types_, and finally click to _Display only selective 
       primitives_, as [shown here](img/avogadro_selection.png).
 	 
-	 * A new tool to simplify this task has also been added (see [this section here](#get-data-from-mol-files))
+	 * A new tool to simplify this task has also been added (see [this section here](#get-data-from-mol-files-wip))
 
 * Every block must be specified within the appropriate tags: `#M...#M`, `#COM...#COM` or `#ANGLES...#ANGLES`
 
 * Angles are calculated specifying between what atoms, e.g.: for `12 13 14` the angle centered on atom 13, which is
 in the middle between 12 and 14 will be calculated
 
-* COM and ANGLES blocks can be empty, just specify only the tags between `null`. 
+* COM and ANGLES blocks can be empty, just specify only the tags between `null`.
+Be careful, because it is **case sensitive**!
+ 
 For example, if you don't want to calculate the center of mass, just write:
  
 ```
@@ -136,7 +144,7 @@ null
 #ANGLES
 ```
 
-## Get data from .mol files (WIP)
+# Get data from .mol files (WIP)
 
 A quick tool to extract bonds information in the way Blacomcalc reads it, is implemented: just use **convert-mol.py**.
 
@@ -145,9 +153,12 @@ the same molecule. However, it can be used for different molecules only if `#M` 
 
 You can launch it as:
 
-`convert-mol.py file.mol number`
+```bash
+convert-mol.py file.mol atoms-number
+```
 
-Where `number` is the number of atoms of **one** molecule of the oligomer. Put it as e.g. 999 to not put delimiters.
+Where `atoms-number` is the number of atoms of **one** molecule of 
+the oligomer. Put it as e.g. 999 to not put delimiters.
 
 It may be useful to first convert a .xyz file in a .mol file using eg. Avogadro 
 or [OpenBabel](http://openbabel.org/wiki/Main_Page) first, and then run the script.
@@ -161,7 +172,7 @@ The script converts it in 1 = s, 2 = d, 3 = t.
 `.mol` files can present also a number 4 for bond type, i.e. _aromaticity_. This is not supported with convert-mol.py 
 thus is needed to change them if necessary. A check for this in the script is present.
 
-The **.mol** file possesses this "turning point":
+The `.mol` file possesses this turning point:
 
 ```
 ...
@@ -179,11 +190,13 @@ The **.mol** file possesses this "turning point":
 Here, e.g. `1  2  1  0  0  0  0` means: "single bond formed by atoms 1 and 2", and so on. 
 The script parses this in order to get such lines in a form `1 2 s`.
 
+The complete anatomy of a `.mol` file can be found [here, on Wikipedia](https://en.wikipedia.org/wiki/Chemical_table_file#Molfile).
+
 # .xyz file
 
 It can be generated with Avogadro, Molden, Gaussian...
 
-Example of file generated with Avogadro:
+Example of `.xyz` file (generated with Avogadro):
 
 ```
 25
@@ -199,13 +212,21 @@ C         -3.36434       -3.78577        0.76351
 
 where the number `25` indicates the number of atoms in the molecule, followed by an empty line.
 
-## Examples
+## Examples (WIP)
 
-If you launch the example files here enclosed in _Quickstart_ folder, with `pyrl.xyz` as geometry 
+If you launch the example files here enclosed in the _Quickstart_ folder, with `pyrl.xyz` as geometry 
 and `atoms_list` as the input file, it is possible for example to compare the calculated bond 
 lengths obtained here against e.g. the Avogadro molecule output [(picture here)](img/BL_avogadro.png).
 
-The overall printed output example is reported in (`output-blacomcalc`).
+There's also a more interesting example. Starting files 
+are `pyrl-dimer-gas.xtbopt.xyz` as geometry and `bonds-dimer.txt` as 
+input. The latter was made using `convert-mol.py` 
+over `pyrl-dimer-gas.xtbopt.mol`.
+
+All of these molecular optimizations have been made with 
+[xTB](https://github.com/grimme-lab/xtb). 
+
+The overall printed output examples are reported in (`output-blacomcalc.txt`).
 
 An example for the `.mol` converter is also present, and its output file is `bonds-tetramer.txt`.
 

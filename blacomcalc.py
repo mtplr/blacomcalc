@@ -10,7 +10,7 @@ the center of masses, and bond angles of the given molecules and bonds,
 starting from an .xyz standard file.
 
 Author: (c) Matteo Paolieri, University of Cologne, Dec 2020
-Version: 2.0.3
+Version: 2.0.4
 License: MIT
 
 Docs: https://github.com/mtplr/blacomcalc
@@ -132,7 +132,7 @@ def calc_com(xyz_file, atom_min, atom_max):
     y = com[1]
     z = com[2]
 
-    com_coord = [x,y,z]
+    com_coord = [x, y, z]
 
     return com_coord
 
@@ -370,11 +370,11 @@ def calc_distance_coms(com_block, coms_coord):
                 print(f'The distance between the center of masses of molecules {int(com_block[mol1])} and'
                       f' {int(com_block[mol2])} is:\n{dist} Å\n\n')
 
-    except:
-        print(f'Error in calculating distances between molecules. Please, control #COM input.\n')
+    except Exception as e:
+        print(f'ERROR in calculating distances between molecules. Please, control #COM input.\n{e}')
 
 
-def calc_bond_angles(xyz_file, angle_block):  # TODO: BOND ANGLES
+def calc_bond_angles(xyz_file, angle_block):
 
     # first convert all str to int, so we have e.g. [1, 2, 3, 4, 5, 6]
     # -1 must be done because I need the index starting from 0,
@@ -420,11 +420,11 @@ def calc_bond_angles(xyz_file, angle_block):  # TODO: BOND ANGLES
     # given the coordinates, calculate the bond angle
     # in pseudo-code: angle = arccos[dot_product(v1, v2)/((norm(v1)*norm(v2))]
 
-        j = 0  # to count the iterations
+    j = 0
 
     for i in range(0, int(len(angle_block)), 3):
 
-        j += 1
+        j += 1  # to count the iterations
 
         # find indices
         atom1 = i
@@ -459,6 +459,19 @@ def calc_bond_angles(xyz_file, angle_block):  # TODO: BOND ANGLES
 def main(xyz, input_file):
 
     # TODO: clean a little bit the spaghetti-code here...
+
+    print('''\n
+    +============================================================================+
+    |                                                                            |
+    |   (  _`\ (_ )                                               (_ )           |
+    |   | (_) ) | |    _ _    ___    _     ___ ___     ___    _ _  | |    ___    |
+    |   |  _ <' | |  /'_` ) /'___) /'_`\ /' _ ` _ `\ /'___) /'_` ) | |  /'___)   |
+    |   | (_) ) | | ( (_| |( (___ ( (_) )| ( ) ( ) |( (___ ( (_| | | | ( (___    |
+    |   (____/'(___)`\__,_)`\____)`\___/'(_) (_) (_)`\____)`\__,_)(___)`\____)   |
+    |                                                                            |
+    |   Matteo Paolieri, University of Cologne, 2020                (v. 2.0.4)   |
+    +============================================================================+
+    \n\n''')
 
     try:
         start_time = time.time()
@@ -583,14 +596,18 @@ def main(xyz, input_file):
 
     except IndexError as e:
 
-        print(f'Error: {e}.\nThere might be a problem with the number of atoms in the input file.'
+        print(f'ERROR: {e}.\nThere might be a problem with the number of atoms in the input file.'
               f' Maybe with line 1 or CoM\'s in atoms_list')
+
+    except Exception as e:
+
+        print(f'UNEXPECTED ERROR: {e}.')  # TODO enhance error handling...
 
 
 def valid_file(param):  # check if the file is .xyz
     base, ext = os.path.splitext(param)
     if ext.lower() not in '.xyz':
-        print(f'Error: file must have a .xyz extension. Used {param} instead.')
+        print(f'ERROR: file must have a .xyz extension. Used {param} instead.')
     return param
 
 
