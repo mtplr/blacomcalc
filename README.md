@@ -7,22 +7,22 @@ starting from a standard `.xyz` file.
 
 Also, for every molecule, it creates a BLA.dat file that can be plotted with e.g. Gnuplot.
 
-### Features
+## Features
 
-* Calculate every bond length distance between the inserted atoms, for the given molecule(s)
+* It calculates every bond length distance between the inserted atoms, for the given molecule(s)
 
-* Calculate the BLA according to the definition: the used formula 
+* It calculates the BLA according to the definition: the used formula 
 is the average of single bond distances minus the average of double bonds
 
-* Creates a BLA.dat file for every molecule that can be plotted with Gnuplot, as e.g. `BLA-1.dat` an so on
+* It creates a BLA.dat file for every molecule that can be plotted with Gnuplot, as e.g. `BLA-1.dat` an so on
 
-* Calculate the center of mass of the desired inserted molecules
+* It calculates the center of mass of the desired inserted molecules
 
-* Calculate the distance between the desired center of masses
+* It calculates the distance between the desired center of masses
 
-* Calculate the bond angle for the specified atoms
+* It calculates the bond angle for the three specified atoms
 
-* Extract what bonds are formed between what atoms, and the bond type (single, double, triple), from a 
+* It extracts what bonds are formed between what atoms, and the bond type (single, double, triple), from a 
 `.mol` file using the enclosed converter `convert-mol.py`. The output is ready for `atoms_list` file 
   (see [later](#get-data-from-mol-files-wip)).
 
@@ -40,12 +40,12 @@ Launch the script:
 calc_bla.py molecule.xyz atoms_list > output-blacomcalc.txt
 ```
 
-# input file guide
+# Input file
 
 The script reads a standard `.xyz` file (the extension is mandatory!) 
 containing the molecule geometry and the indications on what 
 to looking for are within an input file called `atoms_list`. 
-The extension of such file doesn't matter, it is plain text, so no ext 
+The extension of such a file doesn't matter, it is plain text, so no ext 
 or e.g. `.txt` are equally fine.
 
 Data is reported according to the
@@ -69,11 +69,13 @@ which is single and which is double based on the chemical structure given by the
 
 * Angles are calculated specifying between what atoms, e.g.: for `12 13 14` the angle centered on atom 13, which is
 in the middle between 12 and 14 will be calculated
+  
+* At the end of the input file it is possible to leave a blank line or write `end` for completion.
 
-* COM and ANGLES blocks can be empty, just specify only the tags between `null`.
-Be careful, because it is **case sensitive**!
+* `COM` and `ANGLES` blocks can be empty, just specify the tags between the word `null`.
+Be careful, because it is **case-sensitive**!
  
-For example, if you don't want to calculate the center of mass, just write:
+For example, if you don't want to calculate the center of mass and/or the angles, just write the blocks as:
  
 ```
 #COM
@@ -87,7 +89,10 @@ null
 #ANGLES
 ```
 
-## Example of input file 1
+## Examples of input file
+
+In the [quickstart folder](quickstart) there are two examples of input files and their application.
+Here there two "abstract" examples.
 
 ```
 2
@@ -113,6 +118,7 @@ null
 12 13 14
 . . .
 #ANGLES
+end
 ```
 
 The example above means: "calculate the distance between atoms 14 and 13, which corresponds to 
@@ -121,9 +127,7 @@ and the bond angle between the atoms 12 13 and 14.
 
 `s` indicates a single bond and `d` a double.
 
-## Example of input file 2
-
-This will calculate only the BLA value for one molecule, and one bond angle between three atoms.
+This other one, instead, will calculate only the BLA value for one molecule, and one bond angle between three atoms.
 
 ```
 1
@@ -142,6 +146,7 @@ null
 #ANGLES
 12 13 14
 #ANGLES
+end
 ```
 
 # Get data from .mol files (WIP)
@@ -167,7 +172,7 @@ This way it is possible to extract useful information to build the `atoms_list` 
 the couple of atoms for each bond and it specifies what kind of bond (bond order) it is involved 
 (1 = single, 2 = double, 3 = triple, 4 = aromacity).
 
-The script converts it in 1 = s, 2 = d, 3 = t.
+The script converts it in `1 = s, 2 = d, 3 = t`.
 
 `.mol` files can present also a number 4 for bond type, i.e. _aromaticity_. This is not supported with convert-mol.py 
 thus is needed to change them if necessary. A check for this in the script is present.
@@ -190,11 +195,12 @@ The `.mol` file possesses this turning point:
 Here, e.g. `1  2  1  0  0  0  0` means: "single bond formed by atoms 1 and 2", and so on. 
 The script parses this in order to get such lines in a form `1 2 s`.
 
-The complete anatomy of a `.mol` file can be found [here, on Wikipedia](https://en.wikipedia.org/wiki/Chemical_table_file#Molfile).
+The complete anatomy of a `.mol` file can be found 
+[here, on Wikipedia](https://en.wikipedia.org/wiki/Chemical_table_file#Molfile).
 
 # .xyz file
 
-It can be generated with Avogadro, Molden, Gaussian...
+It can be generated with Avogadro, Molden, Gaussian etc.
 
 Example of `.xyz` file (generated with Avogadro):
 
@@ -210,18 +216,16 @@ C         -3.36434       -3.78577        0.76351
 ...       ...             ...            ...
 ```
 
-where the number `25` indicates the number of atoms in the molecule, followed by an empty line.
+where the number `25` indicates the number of atoms in the molecule, followed by a line.
 
-## Examples (WIP)
+## Quickstart and examples (WIP)
 
 If you launch the example files here enclosed in the _Quickstart_ folder, with `pyrl.xyz` as geometry 
 and `atoms_list` as the input file, it is possible for example to compare the calculated bond 
 lengths obtained here against e.g. the Avogadro molecule output [(picture here)](img/BL_avogadro.png).
 
-There's also a more interesting example. Starting files 
-are `pyrl-dimer-gas.xtbopt.xyz` as geometry and `bonds-dimer.txt` as 
-input. The latter was made using `convert-mol.py` 
-over `pyrl-dimer-gas.xtbopt.mol`.
+There's also a more interesting example. Starting files are `pyrl-dimer-gas.xtbopt.xyz` as geometry 
+and `bonds-dimer.txt` as input. The latter was made using `convert-mol.py` over `pyrl-dimer-gas.xtbopt.mol`.
 
 All of these molecular optimizations have been made with 
 [xTB](https://github.com/grimme-lab/xtb). 
@@ -232,7 +236,7 @@ An example for the `.mol` converter is also present, and its output file is `bon
 
 # License
 
-Author: (c) Matteo Paolieri, University of Cologne
+Author: (c) Matteo Paolieri, University of Cologne, 2020
 
 License: MIT (see LICENSE)
 

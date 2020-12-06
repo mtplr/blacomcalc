@@ -2,7 +2,17 @@
 
 """
 
-Blacomcalc
+    +============================================================================+
+    |                                                                            |
+    |   (  _`\ (_ )                                               (_ )           |
+    |   | (_) ) | |    _ _    ___    _     ___ ___     ___    _ _  | |    ___    |
+    |   |  _ <' | |  /'_` ) /'___) /'_`\ /' _ ` _ `\ /'___) /'_` ) | |  /'___)   |
+    |   | (_) ) | | ( (_| |( (___ ( (_) )| ( ) ( ) |( (___ ( (_| | | | ( (___    |
+    |   (____/'(___)`\__,_)`\____)`\___/'(_) (_) (_)`\____)`\__,_)(___)`\____)   |
+    |                                                                            |
+    |   Matteo Paolieri, University of Cologne, 2020                (v. 2.0.4)   |
+    +============================================================================+
+
 
 A simple Computational Chemistry Python script to calculate bond lengths,
 BLA value (Bond Length Alternation) center of mass (CoM), distance between
@@ -461,16 +471,11 @@ def main(xyz, input_file):
     # TODO: clean a little bit the spaghetti-code here...
 
     print('''\n
-    +============================================================================+
-    |                                                                            |
-    |   (  _`\ (_ )                                               (_ )           |
-    |   | (_) ) | |    _ _    ___    _     ___ ___     ___    _ _  | |    ___    |
-    |   |  _ <' | |  /'_` ) /'___) /'_`\ /' _ ` _ `\ /'___) /'_` ) | |  /'___)   |
-    |   | (_) ) | | ( (_| |( (___ ( (_) )| ( ) ( ) |( (___ ( (_| | | | ( (___    |
-    |   (____/'(___)`\__,_)`\____)`\___/'(_) (_) (_)`\____)`\__,_)(___)`\____)   |
-    |                                                                            |
-    |   Matteo Paolieri, University of Cologne, 2020                (v. 2.0.4)   |
-    +============================================================================+
+ +============================+
+ |                            |
+ |   Blacomcalc OUTPUT file   |
+ |                            |
+ +============================+
     \n\n''')
 
     try:
@@ -561,7 +566,8 @@ def main(xyz, input_file):
                       f'\n')
 
             # TODO: print the CoM's coordinate of the selected molecules without repetitions
-            # TODO: fix COM in atoms_list if empty
+
+            # TODO: add torsional angle calculation
 
             # calculate the distance between the selected CoM's
             # using all the molecules sequentially
@@ -581,7 +587,7 @@ def main(xyz, input_file):
             atoms_for_angles = [item for sublist in angle_block for item in sublist]
 
             # calculate bond angle
-            if atoms_for_angles[0] == '0':  # dirty fix to empty vector. TODO: add a clean fix
+            if atoms_for_angles[0] == '0':  # dirty fix to check empty vector. TODO: add a clean fix
                 print(f'No angles to calculate. {atoms_for_angles[0]}')
             else:
                 print(f'\n====================\n'
@@ -601,7 +607,7 @@ def main(xyz, input_file):
 
     except Exception as e:
 
-        print(f'UNEXPECTED ERROR: {e}.')  # TODO enhance error handling...
+        print(f'ERROR: {e}.')  # TODO enhance error handling...
 
 
 def valid_file(param):  # check if the file is .xyz
