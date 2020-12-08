@@ -20,7 +20,7 @@ the center of masses, and bond angles of the given molecules and bonds,
 starting from an .xyz standard file.
 
 Author: (c) Matteo Paolieri, University of Cologne, Dec 2020
-Version: 2.0.4
+Version: 2.0.5
 License: MIT
 
 Docs: https://github.com/mtplr/blacomcalc
@@ -30,7 +30,7 @@ Docs: https://github.com/mtplr/blacomcalc
 
 import argparse
 import os
-
+import collections, functools, operator
 import numpy as np
 import math
 import re as regex
@@ -198,14 +198,14 @@ def calc_bla(xyz_file, bla_data, molecule_number):
         # to each index it corresponds a bond type
         # i.e. s (single), d (double), t (triple)
 
-        column = atoms.split()
+        column = atoms.split(" ")
         atom1 = column[0]
         atom2 = column[1]
-        bond_type = column[2]
+        this_bond_type = column[2]
 
         atom1_list.append(atom1)
         atom2_list.append(atom2)
-        bond_type_list.append(bond_type)
+        bond_type_list.append(this_bond_type)
 
     # number of atoms in atoms_list
     # for each couple there's an index number linked with the vector
@@ -234,14 +234,14 @@ def calc_bla(xyz_file, bla_data, molecule_number):
         y2 = float(y_list[atom_num2])
         z1 = float(z_list[atom_num1])
         z2 = float(z_list[atom_num2])
-        bond_type = bond_type_list[index]
+        this_bond_type = bond_type_list[index]
 
         bond_length = calc_distance(x1, x2, y1, y2, z1, z2)
         bls_list.append(bond_length)
 
         # note: add again +1 because the 0 is not counted here
         print(f'Calculated bond length between atoms '
-              f'{str(a1)} ({str(atom_num1+1)}) and {str(a2)} ({str(atom_num2+1)}), {bond_type}: \n '
+              f'{str(a1)} ({str(atom_num1+1)}) and {str(a2)} ({str(atom_num2+1)}), {this_bond_type}: \n '
               f'{str(bond_length)}')
 
     # finally, calculate the BLA value:
@@ -254,33 +254,72 @@ def calc_bla(xyz_file, bla_data, molecule_number):
     d = 0          # sum of all double bond lengths
     d_count = 0    # number of double bonds
 
-    for i in range(len(bond_type_list)):
+    avs_count = 0  # 'avs' = average of bonds to be added to single bonds count for BLA calculation
+    avs_list_key = []
+    avs_list_bond_length = []
 
-        bond_type = bond_type_list[i]   # get the bond type (s,d)
-        sum_bonds = float(bls_list[i])  # get the bond length
+    for i in range(len(bond_type_list)):  # It includes the average between selected bonds
 
-        if bond_type == 's':
-            s = s + sum_bonds
+        this_bond_type = bond_type_list[i]   # get the bond type (s,d, t, avs_n...)
+        this_bond_length = float(bls_list[i])  # get the bond length
+
+        if this_bond_type == 's':
+            s = s + this_bond_length
             s_count += 1
-        elif bond_type == 'd':
-            d = d + sum_bonds
+        elif this_bond_type == 'd':
+            d = d + this_bond_length
             d_count += 1
+        elif this_bond_type.find('avs') >= 0:  # Thanks to Ludovico Pavesi for the useful comments
 
-    bla_value = s / s_count - d / d_count
+            # TODO Do this also for avd, i.e. for averaging bonds that need to be summed within double bonds
 
-    print(f'\n\n=======================================================\n'
+            # split this_bond_type with respect to the relative number
+            # and make an average between the selected atoms
+            # and consider them as single bonds
+
+            avs_list_key.append(this_bond_type[3:])  # remove 'avs' and put as a key to average the same ones
+            avs_list_bond_length.append(this_bond_length)
+
+    # first average all the bonds you need to
+    # and add it to the single bonds sum
+
+    if len(avs_list_key) > 0:  # check if there are any bond to be average before calculating the BLA
+
+        avs_dic_list = []  # init new LIST of dictionaries
+
+        for i in range(0, len(avs_list_key)):
+
+            dic = {avs_list_key[i]:avs_list_bond_length[i]}  # generate a key-value dictionary
+            avs_dic_list.append(dic)  # append to the dictionary: now we have a set of key/values and need to avg them
+
+        avs_key_list_no_repetitions = list(dict.fromkeys(avs_list_key))  # remove duplicates in avs_list_key
+
+        # calculate average for each key (i.e. every avs1 is averaged
+        # then every avs2, etc... All of these are counted in single bonds)
+
+        for key in list(dict.fromkeys(avs_list_key)):
+            avs_key_average = sum(item.get(str(key), 0) for item in avs_dic_list) / len(avs_key_list_no_repetitions)
+            s_count += 1
+            s = s + avs_key_average
+            avs_count += 1
+
+    # calculate the final BLA value:
+    bla_value = s/s_count - d/d_count
+
+    print(f'\n=========================================================\n'
           f'Molecule no.: {molecule_number}\n'
           f'Total single bonds: {s_count}\n'
           f'Total double bonds: {d_count}\n'
+          f'Total averaged bonds, counted as single: {avs_count}\n'
           f'Final BLA value is (Å): {bla_value}\n'
-          f'=======================================================\n\n')
+          f'=========================================================\n')
 
     # write a BLA.dat file to plot it with gnuplot
     with open(f'BLA-{molecule_number}.dat', "w") as f:
-        print(f'# bond\tbond length (A)', file=f)
+        print(f'# bond no. bond length (Å)', file=f)
         n = 1
         for line in bls_list:
-            print(f'{n}\t{line}', file=f)  # print all lengths + bond index
+            print(f'{n} {line}', file=f)  # print all lengths + bond index
             n += 1
 
 
@@ -288,7 +327,6 @@ def parse(input_file):
     # split and parse the atoms_list file
 
     with open(input_file) as input_file:
-
         text = input_file.read()
 
     # find the number (int) of molecules from the first line
@@ -300,8 +338,8 @@ def parse(input_file):
     angle_blocks = text.split('\n#ANGLES\n')
 
     # generate list of molecule blocks
-    molecule_blocks = molecule_blocks[1:]
-    molecule_blocks.pop(n_of_molecules)
+    molecule_blocks = molecule_blocks[1:]  # remove no. of molecules
+    molecule_blocks.pop(n_of_molecules)  # remove last block (stuff after the last molecule)
 
     # generate a list of string of CoM block
     # e.g. [['1', '2'], ['3', '4']]
@@ -430,7 +468,7 @@ def calc_bond_angles(xyz_file, angle_block):
     # given the coordinates, calculate the bond angle
     # in pseudo-code: angle = arccos[dot_product(v1, v2)/((norm(v1)*norm(v2))]
 
-    j = 0
+    j = 0  # init to count the iterations
 
     for i in range(0, int(len(angle_block)), 3):
 
@@ -468,12 +506,13 @@ def calc_bond_angles(xyz_file, angle_block):
 
 def main(xyz, input_file):
 
-    # TODO: clean a little bit the spaghetti-code here...
+    # TODO: clean a little bit the spaghetti-code here and put everything in the right function
 
     print('''\n
  +============================+
  |                            |
  |   Blacomcalc OUTPUT file   |
+ |   v. 2.0.5                 |
  |                            |
  +============================+
     \n\n''')
@@ -495,9 +534,9 @@ def main(xyz, input_file):
 
             molecule_number_bla = int(molecule_bla) + 1
 
-            print(f'------------------------\n\n'
+            print(f'\n\n---------------------\n\n'
                   f'BLA for MOLECULE: {molecule_number_bla}  \n\n'
-                  f'------------------------\n\n')
+                  f'---------------------\n\n')
 
             # calculate bond lengths and BLA value
             calc_bla(xyz, molecule_blocks[molecule_bla], molecule_number_bla)
@@ -620,8 +659,9 @@ def valid_file(param):  # check if the file is .xyz
 if __name__ == "__main__":
     # parser for shell
     parser = argparse.ArgumentParser(description='A simple Computational Chemistry Python script to '
-                                                 'calculate bond lengths, BLA value (Bond Length Alternation) and '
-                                                 'center of mass (CoM) of the given atoms_list molecules and bonds, '
+                                                 'calculate bond lengths, BLA value (Bond Length Alternation), '
+                                                 'bond angles and center of mass (CoM) '
+                                                 'of the given atoms_list molecules and bonds, '
                                                  'starting from a standard .xyz file.',
                                      epilog='Usage: blacomcalc.py xyz_file atoms_list. Output for plotting '
                                             'data is BLA-n.dat, with n = number of molecule in atoms_list.')
