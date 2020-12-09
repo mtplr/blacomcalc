@@ -55,7 +55,7 @@ blacomcalc.py molecule.xyz input_file > output-blacomcalc.txt
 
 # Input file
 
-The script reads a standard `.xyz` file (the extension is mandatory!) 
+The script reads a standard `.xyz` file (the extension is **mandatory**!) 
 containing the molecule geometry and the indications on what 
 to looking for are within an `input_file`. 
 The extension of such a file doesn't matter, it is plain text, so no extension 
@@ -95,36 +95,42 @@ it will be the 14th bond in the final `BLA.dat` plot file.
   
 * If needed, it is possible to average specific bonds. In that case, those will be counted as single or double 
 bond for BLA calculation. It suffices to write `avs` (that means "average bond calculation to sum up to single 
-bonds) followed by a number. For example, in context:
-```
-#M
-12 13 s
-11 12 avs1
-12 33 avs1 
-7 8 avs2
-9 8 d
-45 55 avs2
-```
-Here, bonds with the same `avs` will be averaged (i.e. those defined by atoms 11, 12 and 12, 33 for `avs1` and those 
-between 7, 8 and 45, 55 for `avs2`) and counted as single bonds for the final BLA calculation. An identical function 
-for this purpose but related to the summation of double bonds is currently **WIP** (`avd`).
+bonds) followed by a number. They must be written **at the end of the molecule block** and **sequentially**, 
+  this way they will be replaced in the `BLA.dat` file with final averaged bonds. 
+  For example, in context:
+    ```
+    #M
+    12 13 s
+    11 12 avs1
+    12 33 avs1 
+    7 8 avs2
+    45 55 avs2
+    ```
+    Here, bonds with the same `avs` number will be averaged (i.e. those defined by atoms 11, 12 and 12, 33 for `avs1` 
+    and those between 7, 8 and 45, 55 for `avs2`) and counted as single bonds for the final 
+    BLA calculation. Those bonds length will be printed in the output, but removed from the BLA.dat files.
+    There, it will be reported only the averaged value for each `avs` number, SEQUENTIALLY, at the end of file.
+    In that example above, bonds `11 12` and `12 33` are removed from `.dat` file and replaced with their average.
+    The same for `avs2`.
+  
+    An identical function for this purpose but related to the summation of double bonds is currently **WIP** (`avd`).
 
 * `COM` and `ANGLES` blocks can be empty, just specify the tags between the word `null`.
 Be careful, because it is **case-sensitive**!
  
-For example, if you don't want to calculate the center of mass and/or the angles, just write the blocks as:
- 
-```
-#COM
-null
-#COM
-```
-
-```
-#ANGLES
-null
-#ANGLES
-```
+    For example, if you don't want to calculate the center of mass and/or the angles, just write the blocks as:
+     
+    ```
+    #COM
+    null
+    #COM
+    ```
+    
+    ```
+    #ANGLES
+    null
+    #ANGLES
+    ```
 
 ## Examples of input file
 

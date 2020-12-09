@@ -10,7 +10,7 @@
     |   | (_) ) | | ( (_| |( (___ ( (_) )| ( ) ( ) |( (___ ( (_| | | | ( (___    |
     |   (____/'(___)`\__,_)`\____)`\___/'(_) (_) (_)`\____)`\__,_)(___)`\____)   |
     |                                                                            |
-    |   Matteo Paolieri, University of Cologne, 2020                (v. 2.0.4)   |
+    |   Matteo Paolieri, University of Cologne, 2020                             |
     +============================================================================+
 
 
@@ -20,21 +20,25 @@ the center of masses, and bond angles of the given molecules and bonds,
 starting from an .xyz standard file.
 
 Author: (c) Matteo Paolieri, University of Cologne, Dec 2020
-Version: 2.0.5
+Version: 2.0.7
 License: MIT
 
 Docs: https://github.com/mtplr/blacomcalc
 
 """
 
+__version__ = "2.0.7"
+
 
 import argparse
 import os
-import collections, functools, operator
 import numpy as np
 import math
 import re as regex
 import time
+
+
+A = chr(197)  # Ångström unit global var (this solves UTF-8 problems)
 
 
 def calc_distance(x1, x2, y1, y2, z1, z2):
@@ -241,8 +245,8 @@ def calc_bla(xyz_file, bla_data, molecule_number):
 
         # note: add again +1 because the 0 is not counted here
         print(f'Calculated bond length between atoms '
-              f'{str(a1)} ({str(atom_num1+1)}) and {str(a2)} ({str(atom_num2+1)}), {this_bond_type}: \n '
-              f'{str(bond_length)}')
+              f'{str(a1)} ({str(atom_num1+1)}) and {str(a2)} ({str(atom_num2+1)}), {this_bond_type}:\n'
+              f'{str(bond_length)} {A}')
 
     # finally, calculate the BLA value:
     # dBLA = sum(d_single)/N – sum(d_double)/M
@@ -289,19 +293,19 @@ def calc_bla(xyz_file, bla_data, molecule_number):
 
         for i in range(0, len(avs_list_key)):
 
-            dic = {avs_list_key[i]:avs_list_bond_length[i]}  # generate a key-value dictionary
+            dic = {avs_list_key[i]: avs_list_bond_length[i]}  # generate a key-value dictionary with bonds to avrg
             avs_dic_list.append(dic)  # append to the dictionary: now we have a set of key/values and need to avg them
-
-        avs_key_list_no_repetitions = list(dict.fromkeys(avs_list_key))  # remove duplicates in avs_list_key
+            bls_list.remove(avs_list_bond_length[i])  # remove the bond to average from the final BLA.dat file
 
         # calculate average for each key (i.e. every avs1 is averaged
         # then every avs2, etc... All of these are counted in single bonds)
 
         for key in list(dict.fromkeys(avs_list_key)):
-            avs_key_average = sum(item.get(str(key), 0) for item in avs_dic_list) / len(avs_key_list_no_repetitions)
+            avs_average = sum(item.get(str(key), 0) for item in avs_dic_list) / len(avs_dic_list)
             s_count += 1
-            s = s + avs_key_average
+            s = s + avs_average
             avs_count += 1
+            bls_list.append(avs_average)  # append at the end of BLA.dat file the averaged bonds SEQUENTIALLY
 
     # calculate the final BLA value:
     bla_value = s/s_count - d/d_count
@@ -311,12 +315,13 @@ def calc_bla(xyz_file, bla_data, molecule_number):
           f'Total single bonds: {s_count}\n'
           f'Total double bonds: {d_count}\n'
           f'Total averaged bonds, counted as single: {avs_count}\n'
-          f'Final BLA value is (Å): {bla_value}\n'
+          f'Final BLA value is: {bla_value} {A}\n'
           f'=========================================================\n')
 
     # write a BLA.dat file to plot it with gnuplot
     with open(f'BLA-{molecule_number}.dat', "w") as f:
-        print(f'# bond no. bond length (Å)', file=f)
+        print(f'#"BLA-{molecule_number}.dat"-Blacomcalc-v.{__version__}\n'
+              f'#BOND_NUMBER BOND_LENGTH_{A}', file=f)  # \xC5 is the unicode char for [Å]
         n = 1
         for line in bls_list:
             print(f'{n} {line}', file=f)  # print all lengths + bond index
@@ -416,7 +421,7 @@ def calc_distance_coms(com_block, coms_coord):
                 dist = calc_distance(x1, x2, y1, y2, z1, z2)
 
                 print(f'The distance between the center of masses of molecules {int(com_block[mol1])} and'
-                      f' {int(com_block[mol2])} is:\n{dist} Å\n\n')
+                      f' {int(com_block[mol2])} is:\n{dist} {A}\n\n')
 
     except Exception as e:
         print(f'ERROR in calculating distances between molecules. Please, control #COM input.\n{e}')
@@ -508,11 +513,11 @@ def main(xyz, input_file):
 
     # TODO: clean a little bit the spaghetti-code here and put everything in the right function
 
-    print('''\n
+    print(f'''\n
  +============================+
  |                            |
  |   Blacomcalc OUTPUT file   |
- |   v. 2.0.5                 |
+ |   v. {__version__}                 |
  |                            |
  +============================+
     \n\n''')
