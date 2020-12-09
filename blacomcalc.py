@@ -320,8 +320,8 @@ def calc_bla(xyz_file, bla_data, molecule_number):
 
     # write a BLA.dat file to plot it with gnuplot
     with open(f'BLA-{molecule_number}.dat', "w") as f:
-        print(f'#"BLA-{molecule_number}.dat"-Blacomcalc-v.{__version__}\n'
-              f'#BOND_NUMBER BOND_LENGTH_{A}', file=f)  # \xC5 is the unicode char for [Å]
+        print(f'# "BLA-{molecule_number}.dat" Blacomcalc v.{__version__}\n'
+              f'# BOND NUMBER | BOND LENGTH [{A}]', file=f)  # \xC5 is the unicode char for [Å]
         n = 1
         for line in bls_list:
             print(f'{n} {line}', file=f)  # print all lengths + bond index
