@@ -37,7 +37,7 @@ is the average of single bond distances minus the average of double bonds. It is
 `.mol` file using the enclosed converter `convert-mol.py`. The output is ready for `input_file` file 
   (see [later](#get-data-from-mol-files-wip)).
   
-* It **will** calculate torsional angles (**WIP**)
+* It **will** calculate torsion angles (**WIP**)
 
 # Usage
 
