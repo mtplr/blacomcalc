@@ -11,7 +11,7 @@ Please, read carefully how to properly create the input file [here](#input-file)
 
 ## Credits
 
-Author: (c) **Matteo Paolieri**, University of Cologne, 2020. 
+Author: **Matteo Paolieri**, University of Cologne, 2020. 
 
 Special thanks for critics and suggestions to: Dr. Daniele Fazzi, Nora Gildemeister, Ludovico Pavesi.
 
