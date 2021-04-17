@@ -11,34 +11,32 @@ Please, read carefully how to properly create the input file [here](#input-file)
 
 ## Credits
 
-Author: (c) Matteo Paolieri, University of Cologne, 2020 
+Author: (c) **Matteo Paolieri**, University of Cologne, 2020. 
 
-Special thanks for critics and suggestions to: Daniele Fazzi, Nora Gildemeister, Ludovico Pavesi
+Special thanks for critics and suggestions to: Dr. Daniele Fazzi, Nora Gildemeister, Ludovico Pavesi.
 
-License: MIT (see LICENSE)
+License: **MIT** (see LICENSE).
 
 ## Features
 
-* It calculates every bond length distance between the inserted atoms, for the given molecule(s)
+* Calculation of every bond length distance between the inserted atoms, for the given molecule(s)
 
-* It calculates the BLA according to the definition: the used formula 
+* Calculation of the BLA according to the definition: the used formula 
 is the average of single bond distances minus the average of double bonds. It is 
   also possible to average specific bonds defined by the user.
 
-* It creates a BLA.dat file for every molecule that can be plotted with Gnuplot, as e.g. `BLA-1.dat` an so on
+* Creation of a `BLA.dat` file for every molecule. This can be plotted with e.g. Gnuplot, OriginLab, Matplotlib
 
-* It calculates the center of mass of the desired inserted molecules
+* Calculation of the center of mass of the desired inserted molecules
 
-* It calculates the distance between the desired center of masses
+* Calculation of the distance between the desired center of masses
 
-* It calculates the bond angle for the three specified atoms
+* Calculation of the bond angle for the three specified atoms
 
-* It extracts what bonds are formed between what atoms, and the bond type (single, double, triple), from a 
+* Extraction of what bonds are formed between what atoms, and the bond type (single, double, triple), from a 
 `.mol` file using the enclosed converter `convert-mol.py`. The output is ready for `input_file` file 
   (see [later](#get-data-from-mol-files-wip)).
   
-* It **will** calculate torsion angles (**WIP**)
-
 # Usage
 
 Clone this repo:
