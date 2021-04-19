@@ -20,14 +20,14 @@ the center of masses, and bond angles of the given molecules and bonds,
 starting from an .xyz standard file.
 
 Author: (c) Matteo Paolieri, University of Cologne, Dec 2020
-Version: 2.0.7
+Version: 2.0.8
 License: MIT
 
 Docs: https://github.com/mtplr/blacomcalc
 
 """
 
-__version__ = "2.0.7"
+__version__ = "2.0.8"
 
 
 import argparse
@@ -38,7 +38,7 @@ import re as regex
 import time
 
 
-A = chr(197)  # Ångström unit global var (this solves UTF-8 problems)
+A = chr(197)  # Ångström unit, global var (this solves UTF-8 problems)
 
 
 def calc_distance(x1, x2, y1, y2, z1, z2):
@@ -517,7 +517,7 @@ def main(xyz, input_file):
  +============================+
  |                            |
  |   Blacomcalc OUTPUT file   |
- |   v. {__version__}                 |
+ |       v. {__version__}             |
  |                            |
  +============================+
     \n\n''')
@@ -588,6 +588,8 @@ def main(xyz, input_file):
 
             coms_coord_list = []  # initialize
 
+            check_molecule_com = 0
+
             for molecule_com in range(len(molecules_for_com)):
 
                 # calculate the Center of Mass of the single molecules,
@@ -602,16 +604,23 @@ def main(xyz, input_file):
 
                 molecule_number = int(molecules_for_com[molecule_com])
 
-                print(f'\n'
-                      f'The center of mass of the molecule no. {molecule_number} is at:\n'
-                      f'x = {x}\n'
-                      f'y = {y}\n'
-                      f'z = {z}\n'
-                      f'\n')
+                # Print the CoM's coordinate of the selected molecules without repetitions
+                # For every molecule it updates the check number; if molecule number and
+                # check number are the same, it doesn't print it
 
-            # TODO: print the CoM's coordinate of the selected molecules without repetitions
+                if molecule_number != check_molecule_com:
 
-            # TODO: add torsional angle calculation
+                    print(f'\n'
+                          f'The center of mass of the molecule no. {molecule_number} is at:\n'
+                          f'x = {x}\n'
+                          f'y = {y}\n'
+                          f'z = {z}\n'
+                          f'\n')
+
+                    check_molecule_com = molecule_number
+
+                else:
+                    continue
 
             # calculate the distance between the selected CoM's
             # using all the molecules sequentially
@@ -651,7 +660,7 @@ def main(xyz, input_file):
 
     except Exception as e:
 
-        print(f'ERROR: {e}.')  # TODO enhance error handling...
+        print(f'ERROR: {e}.')
 
 
 def valid_file(param):  # check if the file is .xyz
