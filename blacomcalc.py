@@ -2,16 +2,16 @@
 
 """
 
-    +============================================================================+
-    |                                                                            |
-    |   (  _`\ (_ )                                               (_ )           |
-    |   | (_) ) | |    _ _    ___    _     ___ ___     ___    _ _  | |    ___    |
-    |   |  _ <' | |  /'_` ) /'___) /'_`\ /' _ ` _ `\ /'___) /'_` ) | |  /'___)   |
-    |   | (_) ) | | ( (_| |( (___ ( (_) )| ( ) ( ) |( (___ ( (_| | | | ( (___    |
-    |   (____/'(___)`\__,_)`\____)`\___/'(_) (_) (_)`\____)`\__,_)(___)`\____)   |
-    |                                                                            |
-    |   Matteo Paolieri, University of Cologne, 2020                             |
-    +============================================================================+
++============================================================================+
+|                                                                            |
+|   (  _`\ (_ )                                               (_ )           |
+|   | (_) ) | |    _ _    ___    _     ___ ___     ___    _ _  | |    ___    |
+|   |  _ <' | |  /'_` ) /'___) /'_`\ /' _ ` _ `\ /'___) /'_` ) | |  /'___)   |
+|   | (_) ) | | ( (_| |( (___ ( (_) )| ( ) ( ) |( (___ ( (_| | | | ( (___    |
+|   (____/'(___)`\__,_)`\____)`\___/'(_) (_) (_)`\____)`\__,_)(___)`\____)   |
+|                                                                            |
+|   Matteo Paolieri, University of Cologne, 2020                             |
++============================================================================+
 
 
 A simple Computational Chemistry Python script to calculate bond lengths,
@@ -19,13 +19,15 @@ BLA value (Bond Length Alternation) center of mass (CoM), distance between
 the center of masses, and bond angles of the given molecules and bonds,
 starting from an .xyz standard file.
 
-Author: (c) Matteo Paolieri, University of Cologne, Dec 2020
+Author: (c) Matteo Paolieri, University of Cologne, 2020
 Version: 2.0.8
 License: MIT
 
 Docs: https://github.com/mtplr/blacomcalc
 
+
 """
+
 
 __version__ = "2.0.8"
 
@@ -71,7 +73,7 @@ def define_mass(m):
 
     masses = {
         "H": 1.0078250322,
-        "C": 12.0,
+        "C": 12.000000000,
         "N": 14.003074004,
         "O": 15.994914619,
         "S": 31.972071174,
@@ -83,72 +85,123 @@ def define_mass(m):
     return masses[m]
 
 
-def calc_com(xyz_file, atom_min, atom_max):
+def calc_com(xyz_file, molecule_block, selected_molecules):
+    
+    print('\n========================\n')
 
-    # calculate the Center of Mass (com)
-    # vR = (1/M)sum(mi*vr_i) where v = vector
+    # calculate the Center of Mass (com) for the selected molecules
+    # equation: vR = (1/M)sum(mi*vr_i) where v = vector
+    
+    # INPUTS:
+    
+    # selected_molecules = ['1', '2', '3', '4']
+    # that means: calculate between 1 and 2, 3 and 4 and so on... 
+    
+    # molecule_block = ['20 4 s\n4 1 d\...', '9 3 s\n...']
 
-    # the algorithm search max and min value in the atoms_list file,
-    # and retrieve all atoms in the xyz
-    # this way it is possible to know what is what
-    # and the range for each molecule
-
-    atom_min: int = atom_min-1  # remove 1 because of the 0 index in lists
-    atom_max: int = atom_max
-
-    with open(xyz_file) as xyz:
-
+    M = 1
+    
+    com_coordinates_all = []
+    
+    for molecule in molecule_block:
+        
+        # retrieve atoms for each molecule in the input file
+        molecule_atoms = [int(s) for s in regex.findall(r'\b\d+\b', molecule)]
+        
+        # remove duplicates, so I got only the atoms index
+        # now I have to retrieve their coordinates in the xyz file
+        
+        molecule_atoms = list(dict.fromkeys(molecule_atoms))
+        
         # read the xyz file and skip the first two lines
-        xyz = xyz.readlines()[2:]
 
-    coord = xyz[atom_min:atom_max]
+        with open(xyz_file) as xyz:
+            xyz = xyz.readlines()[2:]
 
-    # generate a vector with vectors
-    # containing all atoms, e.g.
-    # [['C', '-2.03043', '-7.02776', '1.91131'], [], ...]
+        # generate list_of_atoms
+        # containing ALL ATOMS of the GIVEN XYZ file, e.g.:
+        # [['C', '-2.03043', '-7.02776', '1.91131'], [], ...]
+        # each index of list_of_atoms is the atom number in the xyz file
 
-    list_of_atoms = []
+        list_of_all_atoms = []
 
-    tot_atoms = range((len(coord)))
+        for line in xyz:
+            atom_i = line.split()
+            list_of_all_atoms.append(atom_i)
+        
+        coms_to_calculate = []
+        
+        # append each corresponding atom coordinates found in the xyz
+        for atom in molecule_atoms:
+            i = list_of_all_atoms[atom-1]  #-1 because list starts from 0, input_file from 1
+            coms_to_calculate.append(i)
 
-    for line in tot_atoms:
-        atom_i = coord[line].split()
-        list_of_atoms.append(atom_i)
+        sum_mi_ri = np.array([0.0, 0.0, 0.0])
+        sum_mi = 0
+        
+        for atom in coms_to_calculate:
 
-    sum_mi_ri = np.array([0.0, 0.0, 0.0])
-    sum_mi = 0
+            # assign a mass to the atom type
+            # then calculate the sum of masses
+            label = atom[0]
+            mi = float(define_mass(label))
+            sum_mi = sum_mi + mi
 
-    for atom in list_of_atoms:
+            # remove label, so I have (x,y,z) vector
+            atom.pop(0)
 
-        # assign a mass to the atom type
-        # then calculate the sum of masses
-        label = atom[0]
-        mi = float(define_mass(label))
-        sum_mi = sum_mi + mi
+            # change every value to float and put it in a numpy vector
+            vr_i = np.array(atom, dtype=np.float32)
+            
+            # dot product mass*r_i
+            mi_ri = np.dot(mi, vr_i)
 
-        # remove label, so I have (x,y,z) vector
-        atom.pop(0)
+            # sum all over m_i*r_i
+            sum_mi_ri = sum_mi_ri + mi_ri
 
-        # change every value to float and put it in a numpy vector
-        vr_i = np.array(atom, dtype=np.float32)
+        # get the coordinates of CoM
+        # (and covert np.array to list)
+        com = (np.dot(1/sum_mi, sum_mi_ri)).tolist()
 
-        # dot product mass*r_i
-        mi_ri = np.dot(mi, vr_i)
+        x = com[0]
+        y = com[1]
+        z = com[2]
 
-        # sum all over m_i*r_i
-        sum_mi_ri = sum_mi_ri + mi_ri
+        com_coordinates = [x, y, z]
+        com_coordinates_all.append(com_coordinates)
+        
+        print(f'\nCoM coordinates of molecule {M}:')
+        print(com_coordinates)
+        
+        M += 1
+        
+    print('\n========================\n')
+        
+    # now calculate the distances
+    
+    if len(selected_molecules) % 2 != 0:
+        print("Number of molecules to calculate CoM is odd. Double check input file.")
+        
+    for i in range(0, len(selected_molecules), 2):
 
-    # get the coordinates of CoM
-    # (and covert np.array to list)
-    com = (np.dot(1/sum_mi, sum_mi_ri)).tolist()
+        molecule1 = int(selected_molecules[i])
+        molecule2 = int(selected_molecules[i+1])
+        
+        coord1 = com_coordinates_all[molecule1 - 1]
+        coord2 = com_coordinates_all[molecule2 - 1]
 
-    x = com[0]
-    y = com[1]
-    z = com[2]
-
-    com_coord = [x, y, z]
-
-    return com_coord
+        x1 = coord1[0]
+        y1 = coord1[1]
+        z1 = coord1[2]
+        
+        x2 = coord2[0]
+        y2 = coord2[1]
+        z2 = coord2[2]
+        
+        d = calc_distance(x1,x2,y1,y2,z1,z2)
+        
+        print(f'\nDistance between the CoMs (molecules ' +
+              f'{molecule1}-{molecule2}) is:\n{d} {A}')
 
 
 def calc_bla(xyz_file, bla_data, molecule_number):
@@ -514,13 +567,15 @@ def main(xyz, input_file):
     # TODO: clean a little bit the spaghetti-code here and put everything in the right function
 
     print(f'''\n
- +============================+
- |                            |
- |   Blacomcalc OUTPUT file   |
- |       v. {__version__}             |
- |                            |
- +============================+
-    \n\n''')
+ +=======================================+   
+                                     
+    Blacomcalc OUTPUT file              
+    v. {__version__}                        
+ 
+    https://github.com/mtplr/blacomcalc           
+                                        
+ +=======================================+           
+    \n''')
 
     try:
         start_time = time.time()
@@ -531,6 +586,10 @@ def main(xyz, input_file):
 
         n_of_molecules = int(parsed_text[0])  # number of molecules
         molecule_blocks = parsed_text[1]  # what molecules for BLA
+        
+        # e.g. molecule_blocs = 
+        # ['20 4 s\n4 1 d\n1 2 s\n2 3 d\n3 6 s\n6 7', '72 69 s\n69 73
+        # 68 d\n68 63 s\n63 67 d\n67 62 s\n62 59 d\n59 55 avs1\n59 64 avs1']
 
         # ============= BLA ================================================
 
@@ -548,13 +607,18 @@ def main(xyz, input_file):
 
         # ============= COM ================================================
 
-        com_block = parsed_text[2]  # what molecules for CoM (lst of couples)
+        selected_molecules = parsed_text[2]  # what molecules for CoM 
+                                             # (lst of couples)
 
-        if 'null' in com_block[0]:
+        if 'null' in selected_molecules[0]:
 
-            print("No COM to calculate.")
+            print("No CoM to calculate.")
 
         else:
+            
+            print(f'\n--------------------------\n'
+                  f'CENTER OF MASS - DISTANCE'
+                  f'\n--------------------------\n')
 
             # find for what atoms and molecules calculate the CoM
             # for every molecule in com_block I search the corresponding
@@ -562,77 +626,23 @@ def main(xyz, input_file):
             # so that I can pass it to calc_com function and select
             # the right atoms in the xyz file
 
-            # search each molecule in the COM block and find max and min value
-            # to get the atoms range in the xyz file
-
-            com_atoms_min = []
-            com_atoms_max = []
-
             # first, join the lst of lst (trick by Alex Martelli, 2009)
-            molecules_for_com = [item for sublist in com_block for item in sublist]
-
-            for single_molecule_com in molecules_for_com:
-                # I need to pass a list of molecules (com_block) as [1,2,3...n]
-
-                # then calculate min and max for each molecule
-
-                molecule_string = (molecule_blocks[int(single_molecule_com) - 1])
-
-                min_atom = find_min_max_in_str(molecule_string)[0]
-                max_atom = find_min_max_in_str(molecule_string)[1]
-
-                com_atoms_min.append(min_atom)
-                com_atoms_max.append(max_atom)
-
-            # now search the selected molecule ranges and get the needed atoms!
-
-            coms_coord_list = []  # initialize
-
-            check_molecule_com = 0
-
-            for molecule_com in range(len(molecules_for_com)):
-
-                # calculate the Center of Mass of the single molecules,
-                # specifying the range of every molecule
-                com_coord = calc_com(xyz, int(com_atoms_min[molecule_com]), int(com_atoms_max[molecule_com]))
-
-                x = com_coord[0]
-                y = com_coord[1]
-                z = com_coord[2]
-
-                coms_coord_list.append(com_coord)  # list with all the CoM's coordinates
-
-                molecule_number = int(molecules_for_com[molecule_com])
-
-                # Print the CoM's coordinate of the selected molecules without repetitions
-                # For every molecule it updates the check number; if molecule number and
-                # check number are the same, it doesn't print it
-
-                if molecule_number != check_molecule_com:
-
-                    print(f'\n'
-                          f'The center of mass of the molecule no. {molecule_number} is at:\n'
-                          f'x = {x}\n'
-                          f'y = {y}\n'
-                          f'z = {z}\n'
-                          f'\n')
-
-                    check_molecule_com = molecule_number
-
-                else:
-                    continue
-
-            # calculate the distance between the selected CoM's
-            # using all the molecules sequentially
-            calc_distance_coms(molecules_for_com, coms_coord_list)
-
+            # [['1'], ['2'], ['3']] ---> 
+            # ['1','2','3'] = molecules_for_com
+                        
+            molecules_for_com = [item for sublist in selected_molecules for item in sublist]
+            
+            # get center of masses (CoMs)
+            
+            calc_com(xyz, molecule_blocks, molecules_for_com)
+            
         # ============= ANGLES =============================================
 
         angle_block = parsed_text[3]  # what molecules for angles (lst of str, triples)
 
         if 'null' in angle_block[0]:
 
-            print("No bond angle to calculate.")
+            print("\n---\nNo bond angle to calculate.")
 
         else:
 
@@ -641,21 +651,22 @@ def main(xyz, input_file):
 
             # calculate bond angle
             if atoms_for_angles[0] == '0':  # dirty fix to check empty vector. TODO: add a clean fix
-                print(f'No angles to calculate. {atoms_for_angles[0]}')
+                print(f'\n---\nNo angles to calculate. {atoms_for_angles[0]}')
             else:
-                print(f'\n====================\n'
+                print(f'\n---------------------------\n'
                       f'ANGLES'
-                      f'\n====================\n')
+                      f'\n---------------------------\n')
                 calc_bond_angles(xyz, atoms_for_angles)
 
         # ============= TIMING ===============================================
 
         # print time
-        print(f'\n######## Completed in: {round(((time.time() - start_time)*1000), 2)} ms #########')
+        print(f'\n\n######## Completed in: {round(((time.time() - start_time)*1000), 2)} ms #########')
 
     except IndexError as e:
 
-        print(f'ERROR: {e}.\nThere might be a problem with the number of atoms in the input file.'
+        print(f'ERROR: {e}.\nThere might be a problem with the ' + 
+              'number of atoms in the input file.'
               f' Maybe with line 1 or CoM\'s in atoms_list')
 
     except Exception as e:
@@ -671,16 +682,25 @@ def valid_file(param):  # check if the file is .xyz
 
 
 if __name__ == "__main__":
+    
     # parser for shell
-    parser = argparse.ArgumentParser(description='A simple Computational Chemistry Python script to '
-                                                 'calculate bond lengths, BLA value (Bond Length Alternation), '
-                                                 'bond angles and center of mass (CoM) '
-                                                 'of the given atoms_list molecules and bonds, '
-                                                 'starting from a standard .xyz file.',
-                                     epilog='Usage: blacomcalc.py xyz_file atoms_list. Output for plotting '
-                                            'data is BLA-n.dat, with n = number of molecule in atoms_list.')
-    parser.add_argument('xyz_file', type=valid_file, help="Input .xyz file: first 2 rows must be skipped!")
-    parser.add_argument('input_file', type=str, help="Input atoms_list file containing the desired distances between "
-                                                     "atoms. See README.")
+    
+    parser = argparse.ArgumentParser(
+    description=
+    'A simple script to calculate bond lengths, ' + 
+    'BLA value (Bond Length Alternation), bond angles, center of mass (CoM), '+ 
+    'of the given input file (molecules and bonds), starting from ' +
+    'a standard .xyz file.',
+    epilog=
+    'Usage: blacomcalc.py xyz_file input_file. Output for plotting '
+    'data is BLA-n.dat, n = number of molecule as in the input.')
+    
+    parser.add_argument('xyz_file', type=valid_file, 
+    help="Input .xyz file: first 2 rows must be skipped!")
+    parser.add_argument('input_file', type=str, 
+    help="Input input file containing the desired distances between " +
+    "atoms. See README.")
+    
     args = parser.parse_args()
+    
     main(args.xyz_file, args.input_file)
