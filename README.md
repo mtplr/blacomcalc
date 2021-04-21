@@ -1,13 +1,11 @@
 # Blacomcalc
 
 A simple Computational Chemistry script written in Python to calculate bond lengths,
-BLA value (Bond Length Alternation), center of masses (CoM) , distances between 
-center of masses and bond angles of the given molecules and bonds (in `input_file` file), 
-starting from a standard `.xyz` file. 
+BLA value (Bond Length Alternation), center of masses (CoM), distances between center of masses and bond angles of the given molecules and bonds, starting from a standard `.xyz` file. 
 
-Also, for every molecule, it creates a BLA.dat file that can be plotted with e.g. Gnuplot.
+In addition, a `BLA.dat` file containing all bond lengths is created. It can be plotted with e.g. Gnuplot, OriginLab or Matplotlib.
 
-Please, read carefully how to properly create the input file [here](#input-file).
+Please, read carefully how to properly create the **input file**, [here](#input-file).
 
 ## Credits
 
@@ -17,25 +15,34 @@ Special thanks for critics and suggestions to: Dr. Daniele Fazzi, Nora Gildemeis
 
 License: **MIT** (see LICENSE).
 
+# Table of Contents
+
+   * [Blacomcalc](#blacomcalc)
+      * [Credits](#credits)
+      * [Features](#features)
+   * [Usage](#usage)
+   * [Input file](#input-file)
+      * [Examples of input file](#examples-of-input-file)
+   * [Get data from .mol files](#get-data-from-mol-files)
+   * [.xyz file](#xyz-file)
+      * [Quickstart and examples](#quickstart-and-examples)
+
 ## Features
 
 * Calculation of every bond length distance between the inserted atoms, for the given molecule(s)
 
 * Calculation of the BLA according to the definition: the used formula 
-is the average of single bond distances minus the average of double bonds. It is 
-  also possible to average specific bonds defined by the user.
+is the average of single bond distances minus the average of double bonds. It is also possible to average specific bonds defined by the user.
 
 * Creation of a `BLA.dat` file for every molecule. This can be plotted with e.g. Gnuplot, OriginLab, Matplotlib
 
-* Calculation of the center of mass of the desired inserted molecules
+* Calculation of the center of mass (CoM) of the desired inserted molecules
 
 * Calculation of the distance between the desired center of masses
 
 * Calculation of the bond angle for the three specified atoms
 
-* Extraction of what bonds are formed between what atoms, and the bond type (single, double, triple), from a 
-`.mol` file using the enclosed converter `convert-mol.py`. The output is ready for `input_file` file 
-  (see [later](#get-data-from-mol-files-wip)).
+* Extraction of what bonds are formed between what atoms, and the bond type (single, double, triple), from a `.mol` file using the converter script `convert-mol.py`. The output is ready for Blacomcalc `input_file` (see [later](#get-data-from-mol-files-wip)).
   
 # Usage
 
@@ -48,16 +55,13 @@ git clone https://github.com/mtplr/blacomcalc
 Launch the script:
 
 ```bash
-blacomcalc.py molecule.xyz input_file > output-blacomcalc.txt
+blacomcalc.py molecule.xyz input_file.txt > output-blacomcalc.txt
 ```
 
 # Input file
 
-The script reads a standard `.xyz` file (the extension is **mandatory**!) 
-containing the molecule geometry and the indications on what 
-to looking for are within an `input_file`. 
-The extension of such a file doesn't matter, it is plain text, so no extension 
-or e.g. `.txt` are equally fine.
+The script reads a standard `.xyz` file (the extension is **mandatory**!) containing the molecule geometry and the indications on what to looking for are within an `input_file`. The extension of such a file doesn't matter, it is plain text, so no extension 
+or e.g. `.txt`, `.inp` are equally fine.
 
 Data must be reported according to the
 following specifications:
@@ -92,10 +96,7 @@ single bond between atoms 1 and 2 `1 2 s` in the input is in position `14` of th
 it will be the 14th bond in the final `BLA.dat` plot file.
   
 * If needed, it is possible to average specific bonds. In that case, those will be counted as single or double 
-bond for BLA calculation. It suffices to write `avs` (that means "average bond calculation to sum up to single 
-bonds) followed by a number. They must be written **at the end of the molecule block** and **sequentially**, 
-  this way they will be replaced in the `BLA.dat` file with final averaged bonds. 
-  For example, in context:
+bond for BLA calculation. It suffices to write `avs` (that means *"average bond calculation to sum up to single bonds"*) followed by a number. They must be written **at the end of the molecule block** and **sequentially**, this way they will be replaced in the `BLA.dat` file with final averaged bonds. For example, in context:
     ```
     #M
     12 13 s
@@ -107,11 +108,12 @@ bonds) followed by a number. They must be written **at the end of the molecule b
     Here, bonds with the same `avs` number will be averaged (i.e. those defined by atoms 11, 12 and 12, 33 for `avs1` 
     and those between 7, 8 and 45, 55 for `avs2`) and counted as single bonds for the final 
     BLA calculation. Those bonds length will be printed in the output, but removed from the BLA.dat files.
-    There, it will be reported only the averaged value for each `avs` number, SEQUENTIALLY, at the end of file.
+    There, it will be reported only the averaged value for each `avs` number, **sequentially, at the end of file**.
+
     In that example above, bonds `11 12` and `12 33` are removed from `.dat` file and replaced with their average.
     The same for `avs2`.
   
-    An identical function for this purpose but related to the summation of double bonds is currently **WIP** (`avd`).
+    An identical function for this purpose but related to the summation of double bonds needs to be implemented (e.g. `avd`).
 
 * `COM` and `ANGLES` blocks can be empty, just specify the tags between the word `null`.
 Be careful, because it is **case-sensitive**!
@@ -136,7 +138,7 @@ In the [quickstart folder](quickstart) there are two examples of input files and
 Here there two "abstract" examples.
 
 ```
-2
+4
 #M
 14 13 d
 15 16 d
@@ -153,18 +155,19 @@ Here there two "abstract" examples.
 #M
 #COM
 1 2
+1 4
+3 2
 . . .
 #COM
 #ANGLES
 12 13 14
+199 1 53
 . . .
 #ANGLES
 end
 ```
 
-The example above means: "calculate the distance between atoms 14 and 13, which corresponds to 
-a double bond" and so on, for two molecules. Finally, calculate the center of mass between the molecule 1 and 2
-and the bond angle between the atoms 12 13 and 14.
+The example above means: *calculate the distance between atoms 14 and 13, which corresponds to a double bond* and so on, for two molecules. Finally, calculate the center of mass between the molecule 1 and 2 and the bond angle between the atoms 12 13 and 14.
 
 `s` indicates a single bond and `d` a double.
 
@@ -173,12 +176,14 @@ This other one, instead, will calculate only the BLA value for one molecule, and
 ```
 1
 #M
-14 13 d
+14 13 s
 15 16 d
 12 13 s
 12 15 s
-12 10 s
+12 10 d
 10 11 s
+14 199 avs1
+188 5 avs1
 . . .
 #M
 #COM
@@ -186,13 +191,14 @@ null
 #COM
 #ANGLES
 12 13 14
+38 1 187
 #ANGLES
 end
 ```
 
-# Get data from .mol files (WIP)
+# Get data from .mol files
 
-A quick tool to extract bonds information in the way Blacomcalc reads it, is implemented: just use **convert-mol.py**.
+A quick tool to extract bonds information in the way Blacomcalc reads it, is implemented: just use **convert-mol.py**. This is just a raw script, so it must still be considered **WIP**!
 
 This feature is currently work in progress, and it is reports data for Blacomcalc only for **oligomers** of 
 the same molecule. However, it can be used for different molecules only if `#M` delimiters are put later by hand.
@@ -259,7 +265,7 @@ C         -3.36434       -3.78577        0.76351
 
 where the number `25` indicates the number of atoms in the molecule, followed by a line.
 
-## Quickstart and examples (WIP)
+## Quickstart and examples
 
 If you launch the example files here enclosed in the _Quickstart_ folder, with `pyrl.xyz` as geometry 
 and `input_file` as the input file, it is possible for example to compare the calculated bond 
@@ -269,7 +275,7 @@ There's also a more interesting example. Starting files are `pyrl-dimer-gas.xtbo
 and `bonds-dimer.txt` as input. The latter was made using `convert-mol.py` over `pyrl-dimer-gas.xtbopt.mol`.
 
 All of these molecular optimizations have been made with 
-[xTB](https://github.com/grimme-lab/xtb). 
+[GNF2-xTB](https://github.com/grimme-lab/xtb). 
 
 The overall printed output examples are reported in (`output-blacomcalc.txt`).
 
