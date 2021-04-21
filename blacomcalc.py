@@ -361,13 +361,13 @@ def calc_bla(xyz_file, bla_data, molecule_number):
           f'Final BLA value is: {bla_value} {A}\n'
           f'=========================================================\n')
 
-    # write a BLA.dat file to plot it with gnuplot
-    with open(f'BLA-{molecule_number}.dat', "w") as f:
-        print(f'# "BLA-{molecule_number}.dat" Blacomcalc v.{__version__}\n'
-              f'# BOND NUMBER | BOND LENGTH [{A}]', file=f)  # \xC5 is the unicode char for [Å]
+    # write a BLA.csv file to plot it with Gnuplot
+    with open(f'BLA-{molecule_number}.csv', "w") as f:
+        print(f'"BLA-{molecule_number}.csv" - Blacomcalc v.{__version__}\n\n'
+              f'Bond number, Bond length [{A}]', file=f)  # \xC5 is the unicode char for [Å]
         n = 1
         for line in bls_list:
-            print(f'{n} {line}', file=f)  # print all lengths + bond index
+            print(f'{n}, {line}', file=f)  # print all lengths + bond index
             n += 1
 
 
