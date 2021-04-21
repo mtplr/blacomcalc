@@ -3,7 +3,7 @@
 A simple Computational Chemistry script written in Python to calculate bond lengths,
 BLA value (Bond Length Alternation), center of masses (CoM), distances between center of masses and bond angles of the given molecules and bonds, starting from a standard `.xyz` file. 
 
-In addition, a `BLA.dat` file containing all bond lengths is created. It can be plotted with e.g. Gnuplot, OriginLab or Matplotlib.
+In addition, a `BLA.csv` file containing all bond lengths is created. It can be plotted with e.g. Gnuplot, OriginLab or Matplotlib.
 
 Please, read carefully how to properly create the **input file**, [here](#input-file).
 
@@ -34,7 +34,7 @@ License: **MIT** (see LICENSE).
 * Calculation of the BLA according to the definition: the used formula 
 is the average of single bond distances minus the average of double bonds. It is also possible to average specific bonds defined by the user.
 
-* Creation of a `BLA.dat` file for every molecule. This can be plotted with e.g. Gnuplot, OriginLab, Matplotlib
+* Creation of a `BLA.csv` file for every molecule. This can be plotted with e.g. Gnuplot, OriginLab, Matplotlib
 
 * Calculation of the center of mass (CoM) of the desired inserted molecules
 
@@ -91,12 +91,12 @@ in the middle between 12 and 14 will be calculated
   
 * At the end of the input file it is possible to leave a blank line or write `end` for completion.
 
-* Bonds must be written in the input file as you expect the sorting in the final `BLA.dat` plot file, i.e.: if the 
+* Bonds must be written in the input file as you expect the sorting in the final `BLA.csv` plot file, i.e.: if the 
 single bond between atoms 1 and 2 `1 2 s` in the input is in position `14` of the molecule block, 
-it will be the 14th bond in the final `BLA.dat` plot file.
+it will be the 14th bond in the final `BLA.csv` plot file.
   
 * If needed, it is possible to average specific bonds. In that case, those will be counted as single or double 
-bond for BLA calculation. It suffices to write `avs` (that means *"average bond calculation to sum up to single bonds"*) followed by a number. They must be written **at the end of the molecule block** and **sequentially**, this way they will be replaced in the `BLA.dat` file with final averaged bonds. For example, in context:
+bond for BLA calculation. It suffices to write `avs` (that means *"average bond calculation to sum up to single bonds"*) followed by a number. They must be written **at the end of the molecule block** and **sequentially**, this way they will be replaced in the `BLA.csv` file with final averaged bonds. For example, in context:
     ```
     #M
     12 13 s
@@ -107,10 +107,10 @@ bond for BLA calculation. It suffices to write `avs` (that means *"average bond 
     ```
     Here, bonds with the same `avs` number will be averaged (i.e. those defined by atoms 11, 12 and 12, 33 for `avs1` 
     and those between 7, 8 and 45, 55 for `avs2`) and counted as single bonds for the final 
-    BLA calculation. Those bonds length will be printed in the output, but removed from the BLA.dat files.
+    BLA calculation. Those bonds length will be printed in the output, but removed from the BLA.csv files.
     There, it will be reported only the averaged value for each `avs` number, **sequentially, at the end of file**.
 
-    In that example above, bonds `11 12` and `12 33` are removed from `.dat` file and replaced with their average.
+    In that example above, bonds `11 12` and `12 33` are removed from `.csv` file and replaced with their average.
     The same for `avs2`.
   
     An identical function for this purpose but related to the summation of double bonds needs to be implemented (e.g. `avd`).
