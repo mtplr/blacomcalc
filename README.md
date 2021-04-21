@@ -132,6 +132,8 @@ Be careful, because it is **case-sensitive**!
     #ANGLES
     ```
 
+* **Caveat!** Center of mass (CoM) is calculated **only with respect to the provided bonds**! For instance, if you insert only the bonds related to the molecule's backbone, Blacomcalc will calculate only the center of mass related **only to those atoms!**. It can be a good approximation (for example to calculate distance between molecules), but if you want the "full" CoM, you have to insert all the molecules bonds in the `input_file`.
+
 ## Examples of input file
 
 In the [quickstart folder](quickstart) there are two examples of input files and their application.
