@@ -20,7 +20,7 @@ the center of masses, and bond angles of the given molecules and bonds,
 starting from an .xyz standard file.
 
 Author: (c) Matteo Paolieri, University of Cologne, 2020
-Version: 2.0.8
+Version: 2.0.9
 License: MIT
 
 Docs: https://github.com/mtplr/blacomcalc
@@ -29,7 +29,7 @@ Docs: https://github.com/mtplr/blacomcalc
 """
 
 
-__version__ = "2.0.8"
+__version__ = "2.0.9"
 
 
 import argparse
