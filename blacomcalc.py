@@ -50,23 +50,6 @@ def calc_distance(x1, x2, y1, y2, z1, z2):
     return dist
 
 
-def find_min_max_in_str(string):
-    # find max and min given a string
-
-    numbers = regex.findall(r'\d+', string)  # \d+ = find one or more numbers
-
-    # convert all str in int
-    for i in range(len(numbers)):
-        numbers[i] = int(numbers[i])
-
-    max_n = max(numbers)
-    min_n = min(numbers)
-
-    results = (min_n, max_n)
-
-    return results
-
-
 def define_mass(m):
     # assign a mass value to the specified atom
     # (source IUPAC https://www.ciaaw.org)
@@ -176,7 +159,14 @@ def calc_com(xyz_file, molecule_block, selected_molecules):
         M += 1
         
     print('\n========================\n')
-        
+    
+    # remove '' spaces and what's not a number
+    
+    for i in selected_molecules:
+        if i.isnumeric() is False:
+            index = selected_molecules.index(i)
+            selected_molecules.pop(index)
+    
     # now calculate the distances
     
     if len(selected_molecules) % 2 != 0:
@@ -433,60 +423,20 @@ def parse(input_file):
     return parsed_text
 
 
-def calc_distance_coms(com_block, coms_coord):
-
-    # calculate the distance between the selected CoM's SEQUENTIALLY
-
-    # com_block = vector with the number of molecules you want to
-    # calculate the CoM between, eg ['1', '2', '1', '2']
-
-    # coms_coord = vector with the coordinates of each CoM
-    # e.g. [[x1,y1,z1], [x2,y2,z2], ...]
-
-    # first convert all str to int
-    for i in range(0, len(com_block)):
-        com_block[i] = int(com_block[i])
-
-    try:
-        n_of_molecules = int(len(com_block))
-        if n_of_molecules == 1:
-            print('Distance between center of masses was not calculated. There\'s only one molecule.\n')
-
-        elif (n_of_molecules % 2) == 0 or 1:  # if the number is even or there's only one couple...
-
-            # ...calc distance sequentially e.g. "10 12 13 14", first 10-12 then 13-14
-            # for loop, iterating by 2
-            for i in range(0, n_of_molecules, 2):
-                mol1 = i
-                mol2 = i+1
-
-                coord1 = coms_coord[mol1]
-                coord2 = coms_coord[mol2]
-
-                x1 = coord1[0]
-                y1 = coord1[1]
-                z1 = coord1[2]
-
-                x2 = coord2[0]
-                y2 = coord2[1]
-                z2 = coord2[2]
-
-                dist = calc_distance(x1, x2, y1, y2, z1, z2)
-
-                print(f'The distance between the center of masses of molecules {int(com_block[mol1])} and'
-                      f' {int(com_block[mol2])} is:\n{dist} {A}\n\n')
-
-    except Exception as e:
-        print(f'ERROR in calculating distances between molecules. Please, control #COM input.\n{e}')
-
-
 def calc_bond_angles(xyz_file, angle_block):
 
     # first convert all str to int, so we have e.g. [1, 2, 3, 4, 5, 6]
     # -1 must be done because I need the index starting from 0,
     # in order to read the xyz file and retrieve all the coordinates
     # the goal is to calculate SEQUENTIALLY the angle between 1, 2, 3, then 4, 5, 6...
-
+    
+    # remove '' spaces and what's not a number 
+    
+    for i in angle_block:
+        if i.isnumeric() is False:
+            index = angle_block.index(i)
+            angle_block.pop(index)
+    
     for i in range(0, len(angle_block)):
         angle_block[i] = int(angle_block[i])-1
 
@@ -513,7 +463,7 @@ def calc_bond_angles(xyz_file, angle_block):
     labels = []
 
     for atom in list_of_atoms:
-        label = atom[0]  # TODO: add labels in printing
+        label = atom[0]
         x = atom[1]
         y = atom[2]
         z = atom[3]
@@ -563,8 +513,6 @@ def calc_bond_angles(xyz_file, angle_block):
 
 
 def main(xyz, input_file):
-
-    # TODO: clean a little bit the spaghetti-code here and put everything in the right function
 
     print(f'''\n
  +=======================================+   
@@ -642,21 +590,17 @@ def main(xyz, input_file):
 
         if 'null' in angle_block[0]:
 
-            print("\n---\nNo bond angle to calculate.")
+            print("\n---\nNo bond angle to calculate.\n")
 
         else:
 
-            # first join the lst of lst
+            # first join the lst of lst as line 580
             atoms_for_angles = [item for sublist in angle_block for item in sublist]
 
-            # calculate bond angle
-            if atoms_for_angles[0] == '0':  # dirty fix to check empty vector. TODO: add a clean fix
-                print(f'\n---\nNo angles to calculate. {atoms_for_angles[0]}')
-            else:
-                print(f'\n---------------------------\n'
-                      f'ANGLES'
-                      f'\n---------------------------\n')
-                calc_bond_angles(xyz, atoms_for_angles)
+            print(f'\n---------------------------\n'
+                    f'ANGLES'
+                    f'\n---------------------------\n')
+            calc_bond_angles(xyz, atoms_for_angles)
 
         # ============= TIMING ===============================================
 
@@ -667,7 +611,16 @@ def main(xyz, input_file):
 
         print(f'ERROR: {e}.\nThere might be a problem with the ' + 
               'number of atoms in the input file.'
-              f' Maybe with line 1 or CoM\'s in atoms_list')
+              f' Maybe with line 1 or CoM\'s in the input file.')
+        
+    except ValueError as e:
+        
+        print('\n === WARNING! === \n')
+        print('Please, double check your input file. A ValueError has ' +
+              'occurred. Maybe you forgot the number of molecules on ' +
+              'the first row or an invalid character is present ' +
+              '(e.g. an extra space or a wrong letter).')
+        print(f'[Python error: {e}.]')
 
     except Exception as e:
 
@@ -692,14 +645,12 @@ if __name__ == "__main__":
     'of the given input file (molecules and bonds), starting from ' +
     'a standard .xyz file.',
     epilog=
-    'Usage: blacomcalc.py xyz_file input_file. Output for plotting '
-    'data is BLA-n.dat, n = number of molecule as in the input.')
+    '(c) Matteo Paolieri 2020, License MIT. Docs: https://github.com/mtplr/blacomcalc')
     
     parser.add_argument('xyz_file', type=valid_file, 
     help="Input .xyz file: first 2 rows must be skipped!")
     parser.add_argument('input_file', type=str, 
-    help="Input input file containing the desired distances between " +
-    "atoms. See README.")
+    help="Input file. See documentation.")
     
     args = parser.parse_args()
     
