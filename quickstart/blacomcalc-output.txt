@@ -1,14 +1,12 @@
 
-
- +=======================================+   
++=========================================+   
                                      
     Blacomcalc OUTPUT file              
-    v. 2.0.9                        
+    v. 2.0.10                        
  
     https://github.com/mtplr/blacomcalc           
                                         
- +=======================================+           
-    
++=========================================+           
 
 
 
@@ -78,21 +76,32 @@ Total averaged bonds, counted as single: 0
 Final BLA value is: 0.15472368836036487 Å
 =========================================================
 
-No CoM to calculate.
+
+--------------------------
+CENTER OF MASS - DISTANCE
+--------------------------
+
+
+========================
+
+
+CoM coordinates of molecule 1:
+[-1.7158204641585706, -3.091794087465237, 0.6285929240718976]
+
+========================
+
+No distance between CoM's to calculate.
 
 ---------------------------
 ANGLES
 ---------------------------
 
 
-The angle no. 1 between C C C is: 130.33°
+The angle no. 1 between CC C is: 130.33°
 
 
-The angle no. 2 between C S C is: 89.35°
+The angle no. 2 between CS C is: 89.35°
 
 
-The angle no. 3 between C S C is: 101.11°
+The angle no. 3 between CS C is: 101.11°
 
-
-
-######## Completed in: 0.69 ms #########

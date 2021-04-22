@@ -20,7 +20,7 @@ the center of masses, and bond angles of the given molecules and bonds,
 starting from an .xyz standard file.
 
 Author: (c) Matteo Paolieri, University of Cologne, 2020
-Version: 2.0.9
+Version: 2.0.10
 License: MIT
 
 Docs: https://github.com/mtplr/blacomcalc
@@ -29,7 +29,7 @@ Docs: https://github.com/mtplr/blacomcalc
 """
 
 
-__version__ = "2.0.9"
+__version__ = "2.0.10"
 
 
 import argparse
@@ -37,20 +37,13 @@ import os
 import numpy as np
 import math
 import re as regex
-import time
 
 
-A = chr(197)  # Ångström unit, global var (this solves UTF-8 problems)
-
-
-def calc_distance(x1, x2, y1, y2, z1, z2):
-    # calculate the distance of two 3D points (x,y,z)
-
-    dist: float = math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2 + (z2 - z1) ** 2)
-    return dist
-
+# Ångström unit, global var (this solves UTF-8 problems)
+A = chr(197)  
 
 def define_mass(m):
+    
     # assign a mass value to the specified atom
     # (source IUPAC https://www.ciaaw.org)
 
@@ -66,6 +59,13 @@ def define_mass(m):
     }
 
     return masses[m]
+
+
+def calc_distance(x1, x2, y1, y2, z1, z2):
+    # calculate the distance of two 3D points (x,y,z)
+
+    dist: float = math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2 + (z2 - z1) ** 2)
+    return dist
 
 
 def calc_com(xyz_file, molecule_block, selected_molecules):
@@ -116,7 +116,9 @@ def calc_com(xyz_file, molecule_block, selected_molecules):
         
         # append each corresponding atom coordinates found in the xyz
         for atom in molecule_atoms:
-            i = list_of_all_atoms[atom-1]  #-1 because list starts from 0, input_file from 1
+            
+            #-1 because list starts from 0, input_file from 1
+            i = list_of_all_atoms[atom-1]
             coms_to_calculate.append(i)
 
         sum_mi_ri = np.array([0.0, 0.0, 0.0])
@@ -169,29 +171,37 @@ def calc_com(xyz_file, molecule_block, selected_molecules):
     
     # now calculate the distances
     
-    if len(selected_molecules) % 2 != 0:
-        print("Number of molecules to calculate CoM is odd. Double check input file.")
+    if len(selected_molecules) == 1:
         
-    for i in range(0, len(selected_molecules), 2):
+        print('No distance between CoM\'s to calculate.')
+        
+    elif len(selected_molecules) % 2 != 0:
+        
+        print('Number of molecules to calculate CoM is odd. '
+              ' Double check input file.')
+        
+    else:
+            
+        for i in range(0, len(selected_molecules), 2):
 
-        molecule1 = int(selected_molecules[i])
-        molecule2 = int(selected_molecules[i+1])
-        
-        coord1 = com_coordinates_all[molecule1 - 1]
-        coord2 = com_coordinates_all[molecule2 - 1]
+            molecule1 = int(selected_molecules[i])
+            molecule2 = int(selected_molecules[i+1])
+            
+            coord1 = com_coordinates_all[molecule1 - 1]
+            coord2 = com_coordinates_all[molecule2 - 1]
 
-        x1 = coord1[0]
-        y1 = coord1[1]
-        z1 = coord1[2]
-        
-        x2 = coord2[0]
-        y2 = coord2[1]
-        z2 = coord2[2]
-        
-        d = calc_distance(x1,x2,y1,y2,z1,z2)
-        
-        print(f'\nDistance between the CoMs (molecules ' +
-              f'{molecule1}-{molecule2}) is:\n{d} {A}')
+            x1 = coord1[0]
+            y1 = coord1[1]
+            z1 = coord1[2]
+            
+            x2 = coord2[0]
+            y2 = coord2[1]
+            z2 = coord2[2]
+            
+            d = calc_distance(x1, x2, y1, y2, z1, z2)
+            
+            print(f'\nDistance between the CoMs (molecules ' +
+                f'{molecule1}-{molecule2}) is:\n{d} {A}')
 
 
 def calc_bla(xyz_file, bla_data, molecule_number):
@@ -275,20 +285,26 @@ def calc_bla(xyz_file, bla_data, molecule_number):
 
         a1 = label_list[atom_num1]
         a2 = label_list[atom_num2]
+        
         x1 = float(x_list[atom_num1])
         x2 = float(x_list[atom_num2])
+        
         y1 = float(y_list[atom_num1])
         y2 = float(y_list[atom_num2])
+        
         z1 = float(z_list[atom_num1])
         z2 = float(z_list[atom_num2])
+        
         this_bond_type = bond_type_list[index]
 
         bond_length = calc_distance(x1, x2, y1, y2, z1, z2)
         bls_list.append(bond_length)
 
         # note: add again +1 because the 0 is not counted here
+        
         print(f'Calculated bond length between atoms '
-              f'{str(a1)} ({str(atom_num1+1)}) and {str(a2)} ({str(atom_num2+1)}), {this_bond_type}:\n'
+              f'{str(a1)} ({str(atom_num1+1)}) and {str(a2)} '
+              f'({str(atom_num2+1)}), {this_bond_type}:\n'
               f'{str(bond_length)} {A}')
 
     # finally, calculate the BLA value:
@@ -301,14 +317,21 @@ def calc_bla(xyz_file, bla_data, molecule_number):
     d = 0          # sum of all double bond lengths
     d_count = 0    # number of double bonds
 
-    avs_count = 0  # 'avs' = average of bonds to be added to single bonds count for BLA calculation
+    # 'avs' = average of bonds to be added 
+    # to single bonds count for BLA calculation
+    
+    avs_count = 0 
     avs_list_key = []
     avs_list_bond_length = []
 
-    for i in range(len(bond_type_list)):  # It includes the average between selected bonds
+    # It includes the average between selected bonds
+    for i in range(len(bond_type_list)):
 
-        this_bond_type = bond_type_list[i]   # get the bond type (s,d, t, avs_n...)
-        this_bond_length = float(bls_list[i])  # get the bond length
+        # get the bond type (s,d, t, avs_n...)
+        this_bond_type = bond_type_list[i]
+        
+        # get the bond length
+        this_bond_length = float(bls_list[i])
 
         if this_bond_type == 's':
             s = s + this_bond_length
@@ -316,39 +339,59 @@ def calc_bla(xyz_file, bla_data, molecule_number):
         elif this_bond_type == 'd':
             d = d + this_bond_length
             d_count += 1
-        elif this_bond_type.find('avs') >= 0:  # Thanks to Ludovico Pavesi for the useful comments
+        elif this_bond_type.find('avs') >= 0:  
+            # Thanks to Ludovico Pavesi for the useful comments
 
-            # TODO Do this also for avd, i.e. for averaging bonds that need to be summed within double bonds
+            # TODO: Do this also for avd, i.e. for averaging bonds that need 
+            # to be summed within double bonds
 
             # split this_bond_type with respect to the relative number
             # and make an average between the selected atoms
             # and consider them as single bonds
 
-            avs_list_key.append(this_bond_type[3:])  # remove 'avs' and put as a key to average the same ones
+            avs_list_key.append(this_bond_type[3:])  
+            # remove 'avs' and put as a key to average the same ones
+            
             avs_list_bond_length.append(this_bond_length)
 
     # first average all the bonds you need to
     # and add it to the single bonds sum
 
-    if len(avs_list_key) > 0:  # check if there are any bond to be average before calculating the BLA
+    # check if there are any bond 
+    # to be average before calculating the BLA
+    
+    if len(avs_list_key) > 0:
 
-        avs_dic_list = []  # init new LIST of dictionaries
+        # init new LIST of dictionaries
+        avs_dic_list = []
 
         for i in range(0, len(avs_list_key)):
-
-            dic = {avs_list_key[i]: avs_list_bond_length[i]}  # generate a key-value dictionary with bonds to avrg
-            avs_dic_list.append(dic)  # append to the dictionary: now we have a set of key/values and need to avg them
-            bls_list.remove(avs_list_bond_length[i])  # remove the bond to average from the final BLA.dat file
+            
+            # generate a key-value dictionary with bonds to avrg
+            dic = {avs_list_key[i]: avs_list_bond_length[i]}
+            
+            # append to the dictionary: now we have 
+            # a set of key/values and need to avg them
+            avs_dic_list.append(dic)
+            
+            # remove the bond to average from the final BLA.dat file
+            bls_list.remove(avs_list_bond_length[i])  
 
         # calculate average for each key (i.e. every avs1 is averaged
         # then every avs2, etc... All of these are counted in single bonds)
 
         for key in list(dict.fromkeys(avs_list_key)):
-            avs_average = sum(item.get(str(key), 0) for item in avs_dic_list) / len(avs_dic_list)
+            
+            avs_average = sum(item.get(str(key), 0) for item in 
+                              avs_dic_list) / len(avs_dic_list)
+            
             s_count += 1
             s = s + avs_average
             avs_count += 1
-            bls_list.append(avs_average)  # append at the end of BLA.dat file the averaged bonds SEQUENTIALLY
+            
+            # append at the end of BLA.dat file 
+            # the averaged bonds SEQUENTIALLY
+            bls_list.append(avs_average)
 
     # calculate the final BLA value:
     bla_value = s/s_count - d/d_count
@@ -361,13 +404,19 @@ def calc_bla(xyz_file, bla_data, molecule_number):
           f'Final BLA value is: {bla_value} {A}\n'
           f'=========================================================\n')
 
-    # write a BLA.csv file to plot it with Gnuplot
+    # write a BLA.csv file that can be plotted with external softwares
+    
     with open(f'BLA-{molecule_number}.csv', "w") as f:
-        print(f'"BLA-{molecule_number}.csv" - Blacomcalc v.{__version__}\n\n'
-              f'Bond number, Bond length [{A}]', file=f)  # \xC5 is the unicode char for [Å]
+        
+        print(f'Bond number, Bond length [{A}]', file=f)  
+        # \xC5 is the unicode char for [Å]
+        
         n = 1
+        
         for line in bls_list:
-            print(f'{n}, {line}', file=f)  # print all lengths + bond index
+            
+            # print all lengths + bond index
+            print(f'{n}, {line}', file=f)
             n += 1
 
 
@@ -386,8 +435,11 @@ def parse(input_file):
     angle_blocks = text.split('\n#ANGLES\n')
 
     # generate list of molecule blocks
-    molecule_blocks = molecule_blocks[1:]  # remove no. of molecules
-    molecule_blocks.pop(n_of_molecules)  # remove last block (stuff after the last molecule)
+    
+    # remove no. of molecules
+    molecule_blocks = molecule_blocks[1:]
+    # remove last block (stuff after the last molecule)
+    molecule_blocks.pop(n_of_molecules)
 
     # generate a list of string of CoM block
     # e.g. [['1', '2'], ['3', '4']]
@@ -402,7 +454,8 @@ def parse(input_file):
 
     com_blocks = parsed_com_blocks
 
-    # generate a list of strings of atoms, for angles block, to calculate the angle between
+    # generate a list of strings of atoms, for angles block, 
+    # to calculate the angle between
     # e.g. [['14', '13', '15'], ['16', '17', '18']]
 
     angle_blocks = angle_blocks[1]
@@ -428,7 +481,8 @@ def calc_bond_angles(xyz_file, angle_block):
     # first convert all str to int, so we have e.g. [1, 2, 3, 4, 5, 6]
     # -1 must be done because I need the index starting from 0,
     # in order to read the xyz file and retrieve all the coordinates
-    # the goal is to calculate SEQUENTIALLY the angle between 1, 2, 3, then 4, 5, 6...
+    # the goal is to calculate SEQUENTIALLY the angle between 1, 2, 3, then 
+    # 4, 5, 6...
     
     # remove '' spaces and what's not a number 
     
@@ -473,8 +527,8 @@ def calc_bond_angles(xyz_file, angle_block):
         labels.append(label)
         coord_atoms.append(coord)
 
-    # given the coordinates, calculate the bond angle
-    # in pseudo-code: angle = arccos[dot_product(v1, v2)/((norm(v1)*norm(v2))]
+    # given the coordinates, calculate the bond angle 
+    # angle = arccos[dot_product(v1, v2)/((norm(v1)*norm(v2))]
 
     j = 0  # init to count the iterations
 
@@ -508,38 +562,42 @@ def calc_bond_angles(xyz_file, angle_block):
         angle = round(math.degrees(math.acos(v1v2/(nv1*nv2))), 2)
 
         print(f'\n'
-              f'The angle no. {j} between {label1} {label2} {label3} is: {angle}°'
+              f'The angle no. {j} between {label1}' 
+              f'{label2} {label3} is: {angle}°'
               f'\n')
 
 
 def main(xyz, input_file):
 
-    print(f'''\n
- +=======================================+   
+    print(
+f'''
++=========================================+   
                                      
     Blacomcalc OUTPUT file              
     v. {__version__}                        
  
     https://github.com/mtplr/blacomcalc           
                                         
- +=======================================+           
-    \n''')
++=========================================+           
+''')
 
     try:
-        start_time = time.time()
 
         # first, parse the text
 
         parsed_text = parse(input_file)
 
-        n_of_molecules = int(parsed_text[0])  # number of molecules
-        molecule_blocks = parsed_text[1]  # what molecules for BLA
+        # number of molecules
+        n_of_molecules = int(parsed_text[0])
+        
+        # what molecules for BLA
+        molecule_blocks = parsed_text[1]
         
         # e.g. molecule_blocs = 
         # ['20 4 s\n4 1 d\n1 2 s\n2 3 d\n3 6 s\n6 7', '72 69 s\n69 73
         # 68 d\n68 63 s\n63 67 d\n67 62 s\n62 59 d\n59 55 avs1\n59 64 avs1']
 
-        # ============= BLA ================================================
+        # ============= BLA =======================
 
         # for each molecule...
         for molecule_bla in range(n_of_molecules):
@@ -553,7 +611,7 @@ def main(xyz, input_file):
             # calculate bond lengths and BLA value
             calc_bla(xyz, molecule_blocks[molecule_bla], molecule_number_bla)
 
-        # ============= COM ================================================
+        # ============= COM =========================
 
         selected_molecules = parsed_text[2]  # what molecules for CoM 
                                              # (lst of couples)
@@ -578,7 +636,8 @@ def main(xyz, input_file):
             # [['1'], ['2'], ['3']] ---> 
             # ['1','2','3'] = molecules_for_com
                         
-            molecules_for_com = [item for sublist in selected_molecules for item in sublist]
+            molecules_for_com = [item for sublist in 
+                                 selected_molecules for item in sublist]
             
             # get center of masses (CoMs)
             
@@ -586,7 +645,8 @@ def main(xyz, input_file):
             
         # ============= ANGLES =============================================
 
-        angle_block = parsed_text[3]  # what molecules for angles (lst of str, triples)
+        # what molecules for angles (lst of str, triples)
+        angle_block = parsed_text[3]
 
         if 'null' in angle_block[0]:
 
@@ -594,43 +654,47 @@ def main(xyz, input_file):
 
         else:
 
-            # first join the lst of lst as line 580
-            atoms_for_angles = [item for sublist in angle_block for item in sublist]
+            # first join the lst of lst as above
+            atoms_for_angles = [item for sublist in 
+                                angle_block for item in sublist]
 
             print(f'\n---------------------------\n'
                     f'ANGLES'
                     f'\n---------------------------\n')
+            
+            # then calculate the bond angles
             calc_bond_angles(xyz, atoms_for_angles)
-
-        # ============= TIMING ===============================================
-
-        # print time
-        print(f'\n\n######## Completed in: {round(((time.time() - start_time)*1000), 2)} ms #########')
+            
+    # Some (dirty) error handling here TODO: improvement
 
     except IndexError as e:
 
-        print(f'ERROR: {e}.\nThere might be a problem with the ' + 
-              'number of atoms in the input file.'
-              f' Maybe with line 1 or CoM\'s in the input file.')
+        print('\n === ERROR! === \n'
+              f'ERROR: {e}.\nThere might be a problem with the ' 
+               'number of atoms in the input file. '
+               'Maybe with line 1 or CoM\'s in the input file.')
         
     except ValueError as e:
         
-        print('\n === WARNING! === \n')
-        print('Please, double check your input file. A ValueError has ' +
-              'occurred. Maybe you forgot the number of molecules on ' +
-              'the first row or an invalid character is present ' +
-              '(e.g. an extra space or a wrong letter).')
-        print(f'[Python error: {e}.]')
+        print('\n === WARNING! === \n'
+              'Please, double check your input file. A ValueError has '
+              'occurred. Maybe you forgot the number of molecules on '
+              'the first row or an invalid character is present '
+              '(e.g. an extra space or a wrong letter).\n'
+             f'[Python error: {e}.]')
 
     except Exception as e:
 
-        print(f'ERROR: {e}.')
+        print('\n === ERROR! === \n'
+             f'[Python error: {e}.]')
 
+# check if the file is .xyz
 
-def valid_file(param):  # check if the file is .xyz
+def valid_file(param):
     base, ext = os.path.splitext(param)
     if ext.lower() not in '.xyz':
-        print(f'ERROR: file must have a .xyz extension. Used {param} instead.')
+        print(f'ERROR: file must have a .xyz extension. '
+              'Used {param} instead.')
     return param
 
 
@@ -639,18 +703,24 @@ if __name__ == "__main__":
     # parser for shell
     
     parser = argparse.ArgumentParser(
+    
     description=
-    'A simple script to calculate bond lengths, ' + 
-    'BLA value (Bond Length Alternation), bond angles, center of mass (CoM), '+ 
-    'of the given input file (molecules and bonds), starting from ' +
-    'a standard .xyz file.',
+    f'Blacomcalc (v. {__version__}). '
+    'A simple script to calculate bond lengths, '
+    'BLA values (Bond Length Alternation), bond angles, '
+    'center of masses (CoM) and distance between the CoMs ' 
+    'of the given molecules, starting from '
+    'a standard .xyz molecular geometry file.',
+    
     epilog=
-    '(c) Matteo Paolieri 2020, License MIT. Docs: https://github.com/mtplr/blacomcalc')
+    '(c) Matteo Paolieri 2020, License MIT. ' 
+    'Docs: https://github.com/mtplr/blacomcalc')
     
     parser.add_argument('xyz_file', type=valid_file, 
-    help="Input .xyz file: first 2 rows must be skipped!")
+    help="Geometry input file (.xyz). First 2 rows are skipped.")
+    
     parser.add_argument('input_file', type=str, 
-    help="Input file. See documentation.")
+    help="Input file (plain text). See documentation.")
     
     args = parser.parse_args()
     
