@@ -1,91 +1,88 @@
 
- +============================+
- |                            |
- |   Blacomcalc OUTPUT file   |
- |                            |
- +============================+
+
+ +=======================================+   
+                                     
+    Blacomcalc OUTPUT file              
+    v. 2.0.9                        
+ 
+    https://github.com/mtplr/blacomcalc           
+                                        
+ +=======================================+           
+    
 
 
-------------------------
+
+---------------------
 
 BLA for MOLECULE: 1  
 
-------------------------
+---------------------
 
 
 Calculated bond length between atoms N (14) and C (13), d:
- 1.162951035125727
+1.162951035125727 Å
 Calculated bond length between atoms C (15) and N (16), d:
- 1.16171269942271
+1.16171269942271 Å
 Calculated bond length between atoms C (12) and C (13), s:
- 1.4167040491577625
+1.4167040491577625 Å
 Calculated bond length between atoms C (12) and C (15), s:
- 1.4187264505182104
+1.4187264505182104 Å
 Calculated bond length between atoms C (12) and C (10), s:
- 1.3797396907388004
+1.3797396907388004 Å
 Calculated bond length between atoms C (10) and S (11), s:
- 1.7522913990829265
+1.7522913990829265 Å
 Calculated bond length between atoms C (10) and N (9), d:
- 1.3578620492892495
+1.3578620492892495 Å
 Calculated bond length between atoms N (9) and C (8), s:
- 1.3131590896003424
+1.3131590896003424 Å
 Calculated bond length between atoms C (7) and C (8), d:
- 1.4467950252195365
+1.4467950252195365 Å
 Calculated bond length between atoms C (8) and C (20), s:
- 1.522136355192924
+1.522136355192924 Å
 Calculated bond length between atoms C (20) and C (24), s:
- 1.5333551745437193
+1.5333551745437193 Å
 Calculated bond length between atoms C (20) and C (25), s:
- 1.5393955166882878
+1.5393955166882878 Å
 Calculated bond length between atoms C (20) and C (23), s:
- 1.539538450120685
+1.539538450120685 Å
 Calculated bond length between atoms C (6) and C (7), s:
- 1.373360714779624
+1.373360714779624 Å
 Calculated bond length between atoms C (6) and C (3), s:
- 1.4066438023181278
+1.4066438023181278 Å
 Calculated bond length between atoms S (5) and C (3), s:
- 1.59120884949148
+1.59120884949148 Å
 Calculated bond length between atoms C (3) and C (2), d:
- 1.39525235728165
+1.39525235728165 Å
 Calculated bond length between atoms C (1) and C (2), s:
- 1.3916637176056577
+1.3916637176056577 Å
 Calculated bond length between atoms C (1) and C (4), d:
- 1.3986071722967817
+1.3986071722967817 Å
 Calculated bond length between atoms C (4) and N (17), s:
- 1.3416781342035802
+1.3416781342035802 Å
 Calculated bond length between atoms N (17) and C (19), s:
- 1.4616139226895728
+1.4616139226895728 Å
 Calculated bond length between atoms N (17) and C (18), s:
- 1.461777069494524
+1.461777069494524 Å
 Calculated bond length between atoms C (18) and C (21), s:
- 1.5281774773238874
+1.5281774773238874 Å
 Calculated bond length between atoms C (21) and C (22), s:
- 1.5316976682426588
+1.5316976682426588 Å
 Calculated bond length between atoms C (22) and C (19), s:
- 1.5269536194004063
+1.5269536194004063 Å
 
-
-=======================================================
+=========================================================
 Molecule no.: 1
 Total single bonds: 19
 Total double bonds: 6
-Final BLA value is (Å): 0.15472368836036487
-=======================================================
+Total averaged bonds, counted as single: 0
+Final BLA value is: 0.15472368836036487 Å
+=========================================================
 
+No CoM to calculate.
 
-
-The center of mass of the molecule no. 1 is at:
-x = -1.7158204641585704
-y = -3.0917940874652365
-z = 0.6285929240718975
-
-
-Distance between center of masses was not calculated. There's only one molecule.
-
-
-====================
+---------------------------
 ANGLES
-====================
+---------------------------
 
 
 The angle no. 1 between C C C is: 130.33°
@@ -97,4 +94,5 @@ The angle no. 2 between C S C is: 89.35°
 The angle no. 3 between C S C is: 101.11°
 
 
-######## Completed in: 3.0 ms #########
+
+######## Completed in: 0.69 ms #########
