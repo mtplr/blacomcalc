@@ -30,10 +30,9 @@ License: **MIT** (see LICENSE).
 
 ## Features
 
-* Calculation of every bond length distance between the inserted atoms, for the given molecule(s)
+* Calculation of every bond length distance between the inserted atoms, for the given molecules
 
-* Calculation of the BLA according to the definition: the used formula 
-is the average of single bond distances minus the average of double bonds. It is also possible to average specific bonds defined by the user.
+* Calculation of the BLA according to the definition: the used formula, as reported below, is the average of single bond distances minus the average of double bonds. It is also possible to average specific bonds defined by the user.
 
 * Creation of a `BLA.csv` file for every molecule. This can be plotted with e.g. Gnuplot, OriginLab, Matplotlib
 
@@ -62,7 +61,7 @@ blacomcalc.py molecule.xyz input_file.txt > output-blacomcalc.txt
 Help command:
 
 ```bash
-$ ./blacomcalc.py -h
+$  blacomcalc.py -h
 
 usage: blacomcalc.py [-h] xyz_file input_file
 
@@ -82,22 +81,16 @@ optional arguments:
 
 ## Input file
 
-The script reads a standard `.xyz` file (the extension is **mandatory**!) containing the molecule geometry and the indications on what to looking for are within an `input_file`. The extension of such a file doesn't matter, it is plain text, so no extension 
-or e.g. `.txt`, `.inp` are equally fine.
+The script reads a standard `.xyz` file (the extension is **mandatory**!) containing the molecule geometry and the indications on what to looking for are within an `input_file`. The extension of such a file doesn't matter, it is plain text, so no extension or e.g. `.txt`, `.inp` are equally fine.
 
 Data must be reported according to the
 following specifications:
 
 * The first row: assign one number to the total number of molecules
 
-* `#M` tag, then two atoms for each row, the ones you want the program to calculate the distance between, 
-and a third column that specifies the bond type, everything separated by a space. This can be repeated with 
-multiple molecules separated by `#M`. For the definition of the single and double bonds the user will decide (before) 
-which is single and which is double based on the chemical structure given by the **neutral form**.
-    
-   * To quickly find the atoms involved in bonds, the [software Avogadro](https://avogadro.cc) can be used. It suffices to go on _Selection Tool (F11) > Selection Mode > Molecule_ and then click on settings on
-     _Label_ in _Display Types_, and finally click to _Display only selective 
-      primitives_, as [shown here](img/avogadro_selection.png).
+* `#M` tag, then two atoms for each row, the ones you want the program to calculate the distance between, and a third column that specifies the bond type, everything separated by a space. This can be repeated with multiple molecules separated by `#M`. For the definition of the single and double bonds the user will decide (before) which is single and which is double based on the chemical structure given by the **neutral form**.
+
+  * To quickly find the atoms involved in bonds, the [software Avogadro](https://avogadro.cc) can be used. It suffices to go on _Selection Tool (F11) > Selection Mode > Molecule_ and then click on settings on _Label_ in _Display Types_, and finally click to _Display only selective primitives_, as [shown here](img/avogadro_selection.png).
 
 	* A new tool `convert-mol.py` to simplify this task has also been added 
 	 (see [this section here](#get-data-from-mol-files-wip))
@@ -111,12 +104,11 @@ in the middle between 12 and 14 will be calculated
   
 * At the end of the input file it is possible to leave a blank line or write `end` for completion.
 
-* Bonds must be written in the input file as you expect the sorting in the final `BLA.csv` plot file, i.e.: if the 
-single bond between atoms 1 and 2 `1 2 s` in the input is in position `14` of the molecule block, 
-it will be the 14th bond in the final `BLA.csv` plot file.
+* Bonds must be written in the input file as you expect the sorting in the final `BLA.csv` plot file, i.e.: if the single bond between atoms 1 and 2 `1 2 s` in the input is in position `14` of the molecule block, it will be the 14th bond in the final `BLA.csv` plot file.
   
-* If needed, it is possible to average specific bonds. In that case, those will be counted as single or double 
-bond for BLA calculation. It suffices to write `avs` (that means *"average bond calculation to sum up to single bonds"*) followed by a number. They must be written **at the end of the molecule block** and **sequentially**, this way they will be replaced in the `BLA.csv` file with final averaged bonds. For example, in context:
+* If needed, it is possible to average specific bonds. For example, due to a resonating double bond among near atoms. In that case, those will be counted as **one** single or double bond for BLA calculation. It suffices to write `avs` (that means *average bond calculation to sum up to single bonds*) followed by a number. They must be written **at the end of the molecule block** and **sequentially**, this way they will be replaced in the `BLA.csv` file with final averaged bonds. 
+
+  For example, in context:
 
     ```text
     #M
@@ -127,28 +119,27 @@ bond for BLA calculation. It suffices to write `avs` (that means *"average bond 
     45 55 avs2
     ```
 
-    Here, bonds with the same `avs` number will be averaged (i.e. those defined by atoms 11, 12 and 12, 33 for `avs1` and those between 7, 8 and 45, 55 for `avs2`) and counted as single bonds for the final BLA calculation. Those bonds length will be printed in the output, but removed from the BLA.csv files. There, it will be reported only the averaged value for each `avs` number, **sequentially, at the end of file**.
+  Here, bonds with the same `avs` number will be averaged (i.e. those defined by atoms 11, 12 and 12, 33 for `avs1` and those between 7, 8 and 45, 55 for `avs2`) and counted as single bonds for the final BLA calculation. Those bonds length will be printed in the output, but removed from the BLA.csv files. There, it will be reported only the averaged value for each `avs` number, **sequentially, at the end of file**.
 
-    In that example above, bonds `11 12` and `12 33` are removed from `.csv` file and replaced with their average.
-    The same for `avs2`.
-  
-    An identical function for this purpose but related to the summation of double bonds needs to be implemented (e.g. `avd`).
+  In that example above, bonds `11 12` and `12 33` are removed from `.csv` file and replaced with their average. The same for `avs2`.
+
+  An identical function for this purpose but related to the summation of double bonds needs to be implemented (e.g. `avd`). Collaborations are welcome!
 
 * `COM` and `ANGLES` blocks can be empty, just specify the tags between the word `null`. Be careful, because it is **case-sensitive**!
-   
-   For example, if you don't want to calculate the center of mass and/or the angles, just write the blocks as:
-     
-    ```text
-    #COM
-    null
-    #COM
-    ```
-    
-    ```text
-    #ANGLES
-    null
-    #ANGLES
-    ```
+
+  For example, if you don't want to calculate the center of mass and/or the angles, just write the blocks as:
+
+  ```text
+  #COM
+  null
+  #COM
+  ```
+
+  ```text
+  #ANGLES
+  null
+  #ANGLES
+  ```
 
 * **Caveat!** Center of mass (CoM) is calculated **only with respect to the provided bonds**! For instance, if you insert only the bonds related to the molecule's backbone, Blacomcalc will calculate only the center of mass related **only to those atoms!**. It can be a good approximation (for example to calculate distance between molecules), but if you want the "full" CoM, you have to insert all the molecules bonds in the `input_file`.
 
@@ -156,8 +147,7 @@ bond for BLA calculation. It suffices to write `avs` (that means *"average bond 
 
 A quick tool to extract bonds information in the way Blacomcalc reads it, is implemented: just use **convert-mol.py**. This is just a raw script, so it must still be considered **WIP**!
 
-This feature is currently work in progress, and it is reports data for Blacomcalc only for **oligomers** of 
-the same molecule. However, it can be used for different molecules only if `#M` delimiters are put later by hand.
+This feature is currently work in progress, and it is reports data for Blacomcalc only for **oligomers** of the same molecule. However, it can be used for different molecules only if `#M` delimiters are put later by hand.
 
 You can launch it as:
 
@@ -283,11 +273,11 @@ end
 ### Quickstart
 
 ```bash
-./blacomcalc.py molecule.xyz input_file.txt > blacomcalc-output.txt
+blacomcalc.py molecule.xyz input_file.txt > blacomcalc-output.txt
 ```
 
 If you launch the example files here enclosed in the _Quickstart_ folder, with `molecule.xyz` as geometry and `input_file.txt` as the input file, it is possible for example to compare the calculated bond lengths obtained here against e.g. the Avogadro molecule output [(picture here)](img/BL_avogadro.png).
 
 [GNF2-xTB](https://github.com/grimme-lab/xtb) was used for molecular optimizations.
 
-The overall printed outputs are reported in (`output-blacomcalc.txt`).
+The overall printed outputs are reported in `output-blacomcalc.txt`.
