@@ -14,10 +14,15 @@ Special thanks for critics and suggestions to: Dr. Daniele Fazzi, Nora Gildemeis
 
 License: **MIT** (see LICENSE).
 
+## Contributing
+
+Suggestions and contributions are always welcome! 😉 Please discuss larger changes (e.g. adding torsion angles) via issue before submitting a pull request.
+
 ## Table of Contents
 
 - [Blacomcalc](#blacomcalc)
   - [Credits](#credits)
+  - [Contributing](#contributing)
   - [Table of Contents](#table-of-contents)
   - [Features](#features)
   - [Usage](#usage)
