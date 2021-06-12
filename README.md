@@ -1,3 +1,9 @@
+[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://GitHub.com/Naereen/StrapDown.js/graphs/commit-activity)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
+[![GitHub issues](https://img.shields.io/github/issues/mtplr/blacomcalc)](https://github.com/mtplr/blacomcalc/issues)
+[![made-with-python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/)
+[![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://lbesson.mit-license.org/)
+
 # Blacomcalc
 
 A simple script written in Python to calculate bond lengths, BLA value (Bond Length Alternation), center of masses (CoM), distances between center of masses and bond angles of the given molecules, starting from a standard `.xyz` molecular geometry file.
@@ -8,7 +14,7 @@ Please, read carefully how to properly create the **input file**, [here](#input-
 
 ## Credits
 
-Author: (c) **Matteo Paolieri**, University of Cologne, 2020.
+Author: © **Matteo Paolieri**, University of Cologne, 2020.
 
 Special thanks for critics and suggestions to: Dr. Daniele Fazzi, Nora Gildemeister, Ludovico Pavesi.
 
